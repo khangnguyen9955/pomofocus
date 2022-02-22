@@ -1,25 +1,27 @@
-import { TabContext, TabList, TabPanel } from "@mui/lab";
 import {
   LinearProgress,
+  linearProgressClasses,
   Tab,
   Tabs,
-  toggleButtonClasses,
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { withStyles } from "@mui/styles";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { Box } from "@mui/system";
-import React, { useEffect, useRef, useState } from "react";
-
-const StyledLinearProgress = withStyles({
-  colorPrimary: {
+import React, { useContext, useEffect, useRef, useState } from "react";
+import styled from "@emotion/styled";
+import SettingContext from "./SettingContext";
+import { Settings } from "@mui/icons-material";
+const StyledLinearProgress = styled(LinearProgress)(() => ({
+  [`&.${linearProgressClasses.colorPrimary}`]: {
     backgroundColor: "rgba(0,0,0,0.1)",
   },
-  barColorPrimary: {
+  [`& .${linearProgressClasses.bar}`]: {
+    borderRadius: 5,
     backgroundColor: "white",
   },
-})(LinearProgress);
+  height: 2,
+}));
 
 const useStyles = makeStyles({
   pomodoroArea: {
@@ -60,6 +62,23 @@ const useStyles = makeStyles({
     width: 200,
     backgroundColor: "white",
     border: "none",
+    transition: "0.3s ease-in-out 0s",
+  },
+  stopButton: {
+    cursor: "pointer",
+    margin: "20px 0px 0px",
+    padding: "0px 12px",
+    borderRadius: 4,
+    fontSize: 22,
+    height: 55,
+    color: "rgb(217,85,80)",
+    fontWeight: "bold",
+    width: 200,
+    backgroundColor: "white",
+    border: "none",
+    transform: "translateY(6px)",
+    boxShadow: "none",
+    transition: "0.2s ease-in-out 0s",
   },
   progressArea: {
     marginBottom: 40,
@@ -87,91 +106,138 @@ const useStyles = makeStyles({
 });
 
 const Pomodoro = () => {
+  const settingInfo = useContext(SettingContext);
   const classes = useStyles();
-  const [progress, setProgress] = useState(0);
   const [second, setSecond] = useState(0);
-  const [minute, setMinute] = useState(25);
   const [option, setOption] = useState(0);
   const [play, setPlay] = useState(false);
-  const [totalTime, setTotalTime] = useState(minute * 60);
+  const [showSetting, setShowSetting] = useState(false);
+  // ref
+  const optionRef = useRef(option);
+  const playRef = useRef(play);
+  const secondRef = useRef(second);
 
-  const handleClick = () => {
-    setPlay((pre) => !pre);
-  };
+  let totalSeconds;
+  if (option === 0) {
+    totalSeconds = settingInfo.pomoMinute * 60;
+  } else if (option === 1) {
+    totalSeconds = settingInfo.shortBreakMinute * 60;
+  } else {
+    totalSeconds = settingInfo.longBreakMinute * 60;
+  }
+  const percent = (1 - second / totalSeconds) * 100;
+  const minute = Math.floor(second / 60);
+  let seconds = second % 60;
+  function count() {
+    secondRef.current--;
+    setSecond(secondRef.current);
+  }
+
   useEffect(() => {
-    let interval = null;
-    if (play === true) {
-      interval = setInterval(() => {
-        if (second > 0) {
-          setSecond(second - 1);
-        }
-        if (second === 0) {
-          if (minute === 0) {
-            clearInterval(interval);
-            if (option === 2) {
-              setOption(0);
-            } else {
-              setOption(option + 1);
-            }
-            setProgress(0);
-            setPlay(false);
-          } else {
-            setMinute(minute - 1);
-            setSecond(59);
-          }
-        }
-      }, 1000);
+    function changeOption() {
+      const nextOption = optionRef.current === 0 ? 1 : 0;
+      const nextSecond =
+        (nextOption === 0
+          ? settingInfo.pomoMinute
+          : settingInfo.shortBreakMinute) * 60;
+
+      setOption(nextOption);
+      optionRef.current = nextOption;
+
+      setSecond(nextSecond);
+      secondRef.current = nextSecond;
+      playRef.current = !playRef.current;
+      setPlay(playRef.current);
     }
+    secondRef.current = settingInfo.pomoMinute * 60;
+    setSecond(secondRef.current);
+    const interval = setInterval(() => {
+      if (playRef.current === false) {
+        return;
+      }
+      if (secondRef.current === 0) {
+        return changeOption();
+      }
+      count();
+    }, 1000);
 
     return () => {
       clearInterval(interval);
     };
-  }, [play, second]);
+  }, [settingInfo]);
 
-  const handleTab = (e, newE) => {
-    setOption(newE);
+  const handleStart = () => {
+    setPlay((play) => !play);
+    playRef.current = !playRef.current;
   };
-  // change mode
-  useEffect(() => {
-    setProgress(0);
-    setSecond(0);
 
-    if (option === 0) {
-      setMinute(25);
-      setTotalTime(25 * 60); // actually we must set total time equal to minute*60 + seconds if not the progress cant run if the user config the break less than 1 minute
-      setPlay(false);
+  const handleNext = () => {
+    if (
+      window.confirm(
+        "Are you sure you want to finish the round early? (The remaining time will not be counted in the report.)"
+      )
+    ) {
+      if (option === 0) {
+        setOption((option) => option + 1);
+        defaultValue(option + 1);
+      }
+      if (option === 1) {
+        setOption((option) => option + 1);
+        defaultValue(option + 1);
+      }
+      if (option === 2) {
+        setOption(0);
+        defaultValue(0);
+      }
     }
-    if (option === 1) {
-      setMinute(5);
-      setTotalTime(5 * 60);
-      setPlay(false);
-    }
-    if (option === 2) {
-      setMinute(15);
-      setTotalTime(15 * 60);
-      setPlay(false);
-    }
-  }, [option]);
+  };
 
-  // progress
-  useEffect(() => {
-    const percent = (1 - (minute * 60 + second) / totalTime) * 100;
-    setProgress(percent);
-  }, [second]);
+  // default option value
+  const defaultValue = (e) => {
+    setPlay(false);
+    playRef.current = false;
+    if (e === 0) {
+      setSecond(settingInfo.pomoMinute * 60);
+      secondRef.current = settingInfo.pomoMinute * 60;
+    }
+    if (e === 1) {
+      setSecond(settingInfo.shortBreakMinute * 60);
+      secondRef.current = settingInfo.shortBreakMinute * 60;
+    }
+    if (e === 2) {
+      setSecond(settingInfo.longBreakMinute * 60);
+      secondRef.current = settingInfo.longBreakMinute * 60;
+    }
+  };
 
-  // handle click next tab
-  // khi click show pop up dialog , confirm => next to break , cancel
-  const handleNext = (e) => {};
+  const handleChangeTab = (e, newE) => {
+    defaultValue(newE);
+
+    if (playRef.current === true || totalSeconds !== second) {
+      if (
+        window.confirm(
+          "Are you sure you want to finish the round early? (The remaining time will not be counted in the report.)"
+        )
+      ) {
+        setOption(newE);
+        optionRef.current = newE;
+      }
+    } else {
+      setOption(newE);
+      optionRef.current = newE;
+    }
+  };
+
   return (
     <div className={classes.pomodoroArea}>
       <Box className={classes.progressArea}>
-        <StyledLinearProgress variant="determinate" value={progress} />
+        <StyledLinearProgress variant="determinate" value={percent} />
       </Box>
       <Box className={classes.pomodoroContent}>
         <Tabs
           value={option}
           centered
-          onChange={handleTab}
+          onChange={handleChangeTab}
           textColor="inherit"
           TabIndicatorProps={{
             style: {
@@ -183,29 +249,37 @@ const Pomodoro = () => {
           <Tab label="Short Break" />
           <Tab label="Long Break" />
         </Tabs>
+        {/* Display time */}
         <Box className={classes.timer}>
+          {/* Pomodoro option */}
           {option === 0 && (
             <Typography sx={{ fontSize: "120px", fontWeight: "bold" }}>
               {minute < 10 ? `0${minute}` : minute}:
-              {second < 10 ? `0${second}` : second}
+              {seconds < 10 ? `0${seconds}` : seconds}
             </Typography>
           )}
+          {/* Short Break option */}
           {option === 1 && (
             <Typography sx={{ fontSize: "120px", fontWeight: "bold" }}>
               {minute < 10 ? `0${minute}` : minute}:
-              {second < 10 ? `0${second}` : second}
+              {seconds < 10 ? `0${seconds}` : seconds}
             </Typography>
           )}
+          {/* Long Break option */}
           {option === 2 && (
             <Typography sx={{ fontSize: "120px", fontWeight: "bold" }}>
               {minute < 10 ? `0${minute}` : minute}:
-              {second < 10 ? `0${second}` : second}
+              {seconds < 10 ? `0${seconds}` : seconds}
             </Typography>
           )}
         </Box>
 
+        {/* Button Start and Next */}
         <Box className={classes.start}>
-          <button className={classes.startButton} onClick={handleClick}>
+          <button
+            className={play ? classes.stopButton : classes.startButton}
+            onClick={handleStart}
+          >
             {play ? "STOP" : "START"}
           </button>
           {play && (
