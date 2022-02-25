@@ -10,8 +10,8 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { Box } from "@mui/system";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
-import SettingContext from "./SettingContext";
-import { Settings } from "@mui/icons-material";
+import SettingContext from "../../SettingContext";
+
 const StyledLinearProgress = styled(LinearProgress)(() => ({
   [`&.${linearProgressClasses.colorPrimary}`]: {
     backgroundColor: "rgba(0,0,0,0.1)",
@@ -25,8 +25,9 @@ const StyledLinearProgress = styled(LinearProgress)(() => ({
 
 const useStyles = makeStyles({
   pomodoroArea: {
-    maxWidth: 480,
+    maxWidth: 620,
     margin: "auto",
+    padding: "0px 12px",
   },
   pomodoroContent: {
     backgroundColor: "rgba(255,255,255,0.1)",
@@ -103,6 +104,13 @@ const useStyles = makeStyles({
     right: 0,
     width: "calc( (100% - 200px)/ 2 + 5%)",
   },
+  pomodoroAlign: {
+    textAlign: "center",
+  },
+  pomodoroContainerContent: {
+    maxWidth: 480,
+    margin: "auto",
+  },
 });
 
 const Pomodoro = () => {
@@ -111,7 +119,11 @@ const Pomodoro = () => {
   const [second, setSecond] = useState(0);
   const [option, setOption] = useState(0);
   const [play, setPlay] = useState(false);
-  const [showSetting, setShowSetting] = useState(false);
+  const [render, setRender] = useState(false);
+  const [pomoChange, setPomoChange] = useState(false);
+  const [shortChange, setShortChange] = useState(false);
+  const [longChange, setLongChange] = useState(false);
+  const [defaultSecond, setDefaultSecond] = useState(second);
   // ref
   const optionRef = useRef(option);
   const playRef = useRef(play);
@@ -125,13 +137,82 @@ const Pomodoro = () => {
   } else {
     totalSeconds = settingInfo.longBreakMinute * 60;
   }
-  const percent = (1 - second / totalSeconds) * 100;
+  let percent = (1 - second / totalSeconds) * 100;
   const minute = Math.floor(second / 60);
   let seconds = second % 60;
   function count() {
     secondRef.current--;
     setSecond(secondRef.current);
   }
+
+  // default option value
+  const defaultValue = (e) => {
+    setPlay(false);
+    playRef.current = false;
+    setPomoChange((prev) => !prev);
+    if (e === 0) {
+      setSecond(settingInfo.pomoMinute * 60);
+      secondRef.current = settingInfo.pomoMinute * 60;
+    }
+    if (e === 1) {
+      setSecond(settingInfo.shortBreakMinute * 60);
+      secondRef.current = settingInfo.shortBreakMinute * 60;
+    }
+    if (e === 2) {
+      setSecond(settingInfo.longBreakMinute * 60);
+      secondRef.current = settingInfo.longBreakMinute * 60;
+    }
+  };
+
+  const check = () => {
+    if (optionRef.current === 0) {
+      if (settingInfo.previousValuePomo != settingInfo.pomoMinute) {
+        setPomoChange((prev) => !prev);
+      }
+    } else if (optionRef.current === 1) {
+      if (settingInfo.previousValueShort != settingInfo.shortBreakMinute) {
+        setShortChange((prev) => !prev);
+      }
+    } else {
+      if (settingInfo.previousValueLong != settingInfo.longBreakMinute) {
+        setLongChange((prev) => !prev);
+      }
+    }
+  };
+  useEffect(() => {
+    if (optionRef.current === 0) {
+      if (settingInfo.previousValuePomo != settingInfo.pomoMinute) {
+        setRender((prev) => !prev);
+        settingInfo.setPreviousValuePomo(settingInfo.pomoMinute);
+      }
+    }
+  }, [pomoChange]);
+  useEffect(() => {
+    if (optionRef.current === 1) {
+      if (settingInfo.previousValueShort != settingInfo.shortBreakMinute) {
+        setRender((prev) => !prev);
+        settingInfo.setPreviousValueShort(settingInfo.shortBreakMinute);
+      }
+    }
+  }, [shortChange]);
+  useEffect(() => {
+    if (optionRef.current === 2) {
+      if (settingInfo.previousValueLong != settingInfo.longBreakMinute) {
+        setRender((prev) => !prev);
+        settingInfo.setPreviousValueLong(settingInfo.longBreakMinute);
+      }
+    }
+  }, [longChange]);
+
+  // what is the option current of the user? and any thing at that option change? if yes set render to true
+  useEffect(() => {
+    check();
+  }, [settingInfo.settingConfirm]);
+
+  useEffect(() => {
+    defaultValue(optionRef.current);
+    console.log("render", render);
+  }, [render]);
 
   useEffect(() => {
     function changeOption() {
@@ -149,8 +230,7 @@ const Pomodoro = () => {
       playRef.current = !playRef.current;
       setPlay(playRef.current);
     }
-    secondRef.current = settingInfo.pomoMinute * 60;
-    setSecond(secondRef.current);
+    defaultValue(optionRef.current);
     const interval = setInterval(() => {
       if (playRef.current === false) {
         return;
@@ -160,17 +240,15 @@ const Pomodoro = () => {
       }
       count();
     }, 1000);
-
     return () => {
       clearInterval(interval);
     };
-  }, [settingInfo]);
+  }, []);
 
   const handleStart = () => {
     setPlay((play) => !play);
     playRef.current = !playRef.current;
   };
-
   const handleNext = () => {
     if (
       window.confirm(
@@ -192,24 +270,6 @@ const Pomodoro = () => {
     }
   };
 
-  // default option value
-  const defaultValue = (e) => {
-    setPlay(false);
-    playRef.current = false;
-    if (e === 0) {
-      setSecond(settingInfo.pomoMinute * 60);
-      secondRef.current = settingInfo.pomoMinute * 60;
-    }
-    if (e === 1) {
-      setSecond(settingInfo.shortBreakMinute * 60);
-      secondRef.current = settingInfo.shortBreakMinute * 60;
-    }
-    if (e === 2) {
-      setSecond(settingInfo.longBreakMinute * 60);
-      secondRef.current = settingInfo.longBreakMinute * 60;
-    }
-  };
-
   const handleChangeTab = (e, newE) => {
     defaultValue(newE);
 
@@ -227,71 +287,74 @@ const Pomodoro = () => {
       optionRef.current = newE;
     }
   };
-
   return (
     <div className={classes.pomodoroArea}>
-      <Box className={classes.progressArea}>
-        <StyledLinearProgress variant="determinate" value={percent} />
-      </Box>
-      <Box className={classes.pomodoroContent}>
-        <Tabs
-          value={option}
-          centered
-          onChange={handleChangeTab}
-          textColor="inherit"
-          TabIndicatorProps={{
-            style: {
-              backgroundColor: "rgba(0,0,0,0.15)",
-            },
-          }}
-        >
-          <Tab label="Pomodoro" />
-          <Tab label="Short Break" />
-          <Tab label="Long Break" />
-        </Tabs>
-        {/* Display time */}
-        <Box className={classes.timer}>
-          {/* Pomodoro option */}
-          {option === 0 && (
-            <Typography sx={{ fontSize: "120px", fontWeight: "bold" }}>
-              {minute < 10 ? `0${minute}` : minute}:
-              {seconds < 10 ? `0${seconds}` : seconds}
-            </Typography>
-          )}
-          {/* Short Break option */}
-          {option === 1 && (
-            <Typography sx={{ fontSize: "120px", fontWeight: "bold" }}>
-              {minute < 10 ? `0${minute}` : minute}:
-              {seconds < 10 ? `0${seconds}` : seconds}
-            </Typography>
-          )}
-          {/* Long Break option */}
-          {option === 2 && (
-            <Typography sx={{ fontSize: "120px", fontWeight: "bold" }}>
-              {minute < 10 ? `0${minute}` : minute}:
-              {seconds < 10 ? `0${seconds}` : seconds}
-            </Typography>
-          )}
+      <div className={classes.pomodoroAlign}>
+        <Box className={classes.progressArea}>
+          <StyledLinearProgress variant="determinate" value={percent} />
         </Box>
+        <div className={classes.pomodoroContainerContent}>
+          <Box className={classes.pomodoroContent}>
+            <Tabs
+              value={option}
+              centered
+              onChange={handleChangeTab}
+              textColor="inherit"
+              TabIndicatorProps={{
+                style: {
+                  backgroundColor: "rgba(0,0,0,0.15)",
+                },
+              }}
+            >
+              <Tab label="Pomodoro" />
+              <Tab label="Short Break" />
+              <Tab label="Long Break" />
+            </Tabs>
+            {/* Display time */}
+            <Box className={classes.timer}>
+              {/* Pomodoro option */}
+              {option === 0 && (
+                <Typography sx={{ fontSize: "120px", fontWeight: "bold" }}>
+                  {minute < 10 ? `0${minute}` : minute}:
+                  {seconds < 10 ? `0${seconds}` : seconds}
+                </Typography>
+              )}
+              {/* Short Break option */}
+              {option === 1 && (
+                <Typography sx={{ fontSize: "120px", fontWeight: "bold" }}>
+                  {minute < 10 ? `0${minute}` : minute}:
+                  {seconds < 10 ? `0${seconds}` : seconds}
+                </Typography>
+              )}
+              {/* Long Break option */}
+              {option === 2 && (
+                <Typography sx={{ fontSize: "120px", fontWeight: "bold" }}>
+                  {minute < 10 ? `0${minute}` : minute}:
+                  {seconds < 10 ? `0${seconds}` : seconds}
+                </Typography>
+              )}
+            </Box>
 
-        {/* Button Start and Next */}
-        <Box className={classes.start}>
-          <button
-            className={play ? classes.stopButton : classes.startButton}
-            onClick={handleStart}
-          >
-            {play ? "STOP" : "START"}
-          </button>
-          {play && (
-            <div className={classes.nextButton}>
-              <NavigateNextIcon
-                sx={{ fontSize: 50 }}
-                onClick={handleNext}
-              ></NavigateNextIcon>
-            </div>
-          )}
-        </Box>
-      </Box>
+            {/* Button Start and Next */}
+            <Box className={classes.start}>
+              <button
+                className={play ? classes.stopButton : classes.startButton}
+                onClick={handleStart}
+              >
+                {play ? "STOP" : "START"}
+              </button>
+              {play && (
+                <div className={classes.nextButton}>
+                  <NavigateNextIcon
+                    sx={{ fontSize: 50 }}
+                    onClick={handleNext}
+                  />
+                </div>
+              )}
+            </Box>
+          </Box>
+        </div>
+      </div>
     </div>
   );
 };

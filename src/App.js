@@ -1,8 +1,6 @@
 import { useState } from "react";
-import Header from "./Header";
 import HomePage from "./Main";
-import Pomodoro from "./Main/Pomo";
-import SettingContext from "./Main/Pomo/SettingContext";
+import SettingContext from "./SettingContext";
 
 function App() {
   const [pomoMinute, setPomoMinute] = useState(25);
@@ -11,17 +9,18 @@ function App() {
   const [showSetting, setShowSetting] = useState(false);
   const [autoBreak, setAutoBreak] = useState(false);
   const [autoPomo, setAutoPomo] = useState(false);
+  const [pomoBackground, setPomoBackground] = useState(true);
+  const [shortBackground, setShortBackground] = useState(false);
+  const [longBackground, setLongBackground] = useState(false);
+  const [settingConfirm, setSettingConfirm] = useState(false);
+  const [previousValuePomo, setPreviousValuePomo] = useState(pomoMinute);
+  const [previousValueShort, setPreviousValueShort] =
+    useState(shortBreakMinute);
+  const [previousValueLong, setPreviousValueLong] = useState(longBreakMinute);
+
   return (
     <div>
-      <main
-        style={{
-          backgroundColor: "rgba(217,85,80)",
-          width: "100%",
-          height: "100%",
-          color: "white",
-          boxSizing: "border-box",
-        }}
-      >
+      <main>
         <SettingContext.Provider
           value={{
             pomoMinute,
@@ -36,14 +35,26 @@ function App() {
             setAutoBreak,
             autoPomo,
             setAutoPomo,
+            shortBackground,
+            pomoBackground,
+            longBackground,
+            setShortBackground,
+            setPomoBackground,
+            setLongBackground,
+            settingConfirm,
+            setSettingConfirm,
+            previousValuePomo,
+            setPreviousValuePomo,
+            previousValueShort,
+            previousValueLong,
+            setPreviousValueShort,
+            setPreviousValueLong,
           }}
         >
-          <Header />
           <HomePage />
         </SettingContext.Provider>
       </main>
     </div>
   );
 }
-
 export default App;
