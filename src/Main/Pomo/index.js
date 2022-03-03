@@ -211,7 +211,6 @@ const Pomodoro = () => {
 
   useEffect(() => {
     defaultValue(optionRef.current);
-    console.log("render", render);
   }, [render]);
 
   useEffect(() => {
@@ -288,72 +287,67 @@ const Pomodoro = () => {
     }
   };
   return (
-    <div className={classes.pomodoroArea}>
-      <div className={classes.pomodoroAlign}>
-        <Box className={classes.progressArea}>
-          <StyledLinearProgress variant="determinate" value={percent} />
-        </Box>
-        <div className={classes.pomodoroContainerContent}>
-          <Box className={classes.pomodoroContent}>
-            <Tabs
-              value={option}
-              centered
-              onChange={handleChangeTab}
-              textColor="inherit"
-              TabIndicatorProps={{
-                style: {
-                  backgroundColor: "rgba(0,0,0,0.15)",
-                },
-              }}
-            >
-              <Tab label="Pomodoro" />
-              <Tab label="Short Break" />
-              <Tab label="Long Break" />
-            </Tabs>
-            {/* Display time */}
-            <Box className={classes.timer}>
-              {/* Pomodoro option */}
-              {option === 0 && (
-                <Typography sx={{ fontSize: "120px", fontWeight: "bold" }}>
-                  {minute < 10 ? `0${minute}` : minute}:
-                  {seconds < 10 ? `0${seconds}` : seconds}
-                </Typography>
-              )}
-              {/* Short Break option */}
-              {option === 1 && (
-                <Typography sx={{ fontSize: "120px", fontWeight: "bold" }}>
-                  {minute < 10 ? `0${minute}` : minute}:
-                  {seconds < 10 ? `0${seconds}` : seconds}
-                </Typography>
-              )}
-              {/* Long Break option */}
-              {option === 2 && (
-                <Typography sx={{ fontSize: "120px", fontWeight: "bold" }}>
-                  {minute < 10 ? `0${minute}` : minute}:
-                  {seconds < 10 ? `0${seconds}` : seconds}
-                </Typography>
-              )}
-            </Box>
-
-            {/* Button Start and Next */}
-            <Box className={classes.start}>
-              <button
-                className={play ? classes.stopButton : classes.startButton}
-                onClick={handleStart}
-              >
-                {play ? "STOP" : "START"}
-              </button>
-              {play && (
-                <div className={classes.nextButton}>
-                  <NavigateNextIcon
-                    sx={{ fontSize: 50 }}
-                    onClick={handleNext}
-                  />
-                </div>
-              )}
-            </Box>
+    <div>
+      <Box className={classes.progressArea}>
+        <StyledLinearProgress variant="determinate" value={percent} />
+      </Box>
+      <div className={classes.pomodoroContainerContent}>
+        <Box className={classes.pomodoroContent}>
+          <Tabs
+            value={option}
+            centered
+            onChange={handleChangeTab}
+            textColor="inherit"
+            TabIndicatorProps={{
+              style: {
+                backgroundColor: "rgba(0,0,0,0.15)",
+              },
+            }}
+          >
+            <Tab label="Pomodoro" />
+            <Tab label="Short Break" />
+            <Tab label="Long Break" />
+          </Tabs>
+          {/* Display time */}
+          <Box className={classes.timer}>
+            {/* Pomodoro option */}
+            {option === 0 && (
+              <Typography sx={{ fontSize: "120px", fontWeight: "bold" }}>
+                {minute < 10 ? `0${minute}` : minute}:
+                {seconds < 10 ? `0${seconds}` : seconds}
+              </Typography>
+            )}
+            {/* Short Break option */}
+            {option === 1 && (
+              <Typography sx={{ fontSize: "120px", fontWeight: "bold" }}>
+                {minute < 10 ? `0${minute}` : minute}:
+                {seconds < 10 ? `0${seconds}` : seconds}
+              </Typography>
+            )}
+            {/* Long Break option */}
+            {option === 2 && (
+              <Typography sx={{ fontSize: "120px", fontWeight: "bold" }}>
+                {minute < 10 ? `0${minute}` : minute}:
+                {seconds < 10 ? `0${seconds}` : seconds}
+              </Typography>
+            )}
           </Box>
-        </div>
+
+          {/* Button Start and Next */}
+          <Box className={classes.start}>
+            <button
+              className={play ? classes.stopButton : classes.startButton}
+              onClick={handleStart}
+            >
+              {play ? "STOP" : "START"}
+            </button>
+            {play && (
+              <div className={classes.nextButton}>
+                <NavigateNextIcon sx={{ fontSize: 50 }} onClick={handleNext} />
+              </div>
+            )}
+          </Box>
+        </Box>
       </div>
     </div>
   );
