@@ -204,13 +204,16 @@ const Setting = ({ showSetting }) => {
   // not done yet
   useEffect(() => {
     if (
-      (pomodoro || shortBreak || longBreak) <= 0 ||
-      isNaN(pomodoro || shortBreak || longBreak) === true
-    )
+      pomodoro <= 0 ||
+      shortBreak <= 0 ||
+      longBreak <= 0 ||
+      isNaN(pomodoro) === true ||
+      isNaN(shortBreak) === true ||
+      isNaN(longBreak) === true
+    ) {
       setDisabled(true);
-    else setDisabled(false);
+    } else setDisabled(false);
   }, [pomodoro, shortBreak, longBreak]);
-
   return (
     <>
       {settingInfo.showSetting && (

@@ -17,6 +17,7 @@ function App() {
   const [previousValueShort, setPreviousValueShort] =
     useState(shortBreakMinute);
   const [previousValueLong, setPreviousValueLong] = useState(longBreakMinute);
+  const [showInputTask, setShowInputTask] = useState(false);
 
   return (
     <div>
@@ -49,6 +50,8 @@ function App() {
             previousValueLong,
             setPreviousValueShort,
             setPreviousValueLong,
+            showInputTask,
+            setShowInputTask,
           }}
         >
           <HomePage />
