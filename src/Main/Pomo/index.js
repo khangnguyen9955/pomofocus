@@ -123,7 +123,6 @@ const Pomodoro = () => {
   const [pomoChange, setPomoChange] = useState(false);
   const [shortChange, setShortChange] = useState(false);
   const [longChange, setLongChange] = useState(false);
-  const [defaultSecond, setDefaultSecond] = useState(second);
   // ref
   const optionRef = useRef(option);
   const playRef = useRef(play);

@@ -196,12 +196,12 @@ const Setting = ({ showSetting }) => {
       settingInfo.setSettingConfirm(false);
     }
   };
+  // need to calculate the current pomo vs setting pomo not stop pomo
   const handleSubmitSetting = () => {
     checkValueChange();
     settingInfo.setShowSetting(false);
   };
   const classes = useStyles();
-  // not done yet
   useEffect(() => {
     if (
       pomodoro <= 0 ||
@@ -222,7 +222,6 @@ const Setting = ({ showSetting }) => {
             <ClearIcon
               className={classes.icon}
               onClick={() => {
-                checkValueChange();
                 settingInfo.setShowSetting(false);
               }}
             />

@@ -95,7 +95,6 @@ const TodoList = () => {
     const newTodo = [todo, ...todos];
     setTodos(newTodo);
   };
-  console.log("todos", todos);
 
   return (
     <div className={classes.containerTodoList}>
@@ -107,6 +106,7 @@ const TodoList = () => {
           </button>
         </div>
       </div>
+      <TodoItem todos={todos} />
       {settingInfo.showInputTask ? (
         <ToDoForm onSubmit={addTodo} />
       ) : (
@@ -119,8 +119,6 @@ const TodoList = () => {
           </Typography>
         </div>
       )}
-
-      <TodoItem todos={todos} />
       <div className={classes.containerEstimation}>
         <div className={classes.estimation}>
           <div className={classes.estimationItem}>
