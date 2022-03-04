@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@mui/styles";
 import DoneIcon from "@mui/icons-material/Done";
 
@@ -14,6 +14,19 @@ const useStyles = makeStyles(() => ({
     fontSize: 16,
     boxSizing: "border-box",
     borderLeft: "6px solid transparent",
+    transition: "unset",
+  },
+  containerItemFocused: {
+    width: "100%",
+    backgroundColor: "white",
+    boxShadow: "rgb(0 0 0/10%) 0px 4px 4px",
+    borderRadius: 4,
+    cursor: "pointer",
+    marginTop: 8,
+    textAlign: "left",
+    fontSize: 16,
+    boxSizing: "border-box",
+    borderLeft: "6px solid black",
     transition: "unset",
   },
   layerItem: {
@@ -52,14 +65,46 @@ const useStyles = makeStyles(() => ({
     alignItems: "center",
     lineHeight: "1.5em",
   },
+  countPomo: {
+    display: "inline-block",
+    color: "rgb(187,187,187)",
+    fontWeight: "bold",
+    marginRight: 18,
+    width: 40,
+    fontSize: 18,
+    textAlign: "right",
+  },
+  totalPomo: {
+    fontSize: 14,
+    marginLeft: 2,
+  },
 }));
 const TodoItem = ({ todos }) => {
+  const [focus, setFocus] = useState({
+    id: null,
+  });
+  // test get index and pomo value of focused item
+  // useEffect(() => {
+  //   console.log("focus", focus);
+  //   console.log(todos);
+  //   const newa = todos.filter((item) => item.id === focus);
+  //   test = newa[0].pomo;
+  //   console.log(test);
+  // }, [focus]);
   const classes = useStyles();
   return (
     <>
-      {todos.map((todo) => (
-        <div>
-          <div className={classes.containerItem} key={todo.id}>
+      {todos.map((todo, index) => (
+        <div key={index}>
+          <div
+            className={
+              todo.id === focus
+                ? classes.containerItemFocused
+                : classes.containerItem
+            }
+            key={todo.id}
+            onClick={() => setFocus(todo.id)}
+          >
             <div className={classes.layerItem}>
               <div className={classes.containerItemLeft}>
                 <div className={classes.itemTick}>
@@ -70,11 +115,12 @@ const TodoItem = ({ todos }) => {
                 <span className={classes.itemTitle}>{todo.text}</span>
               </div>
               <div className={classes.containerItemRight}>
-                <span>
-                  <span>cc</span>
+                <span className={classes.countPomo}>
+                  {todo.currentPomo}
+                  <span className={classes.totalPomo}>/ {todo.pomo}</span>
                 </span>
                 <div>
-                  <div>cc</div>
+                  <div>c</div>
                 </div>
               </div>
             </div>

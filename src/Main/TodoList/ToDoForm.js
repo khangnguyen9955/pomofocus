@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useState } from "react";
 import { makeStyles } from "@mui/styles";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
@@ -193,8 +193,16 @@ const ToDoForm = (props) => {
   const classes = useStyles();
   const settingInfo = useContext(settingContext);
   const [inputValue, setInputValue] = useState("");
-  const [pomoValue, setPomoValue] = useState(0);
-  const inputRef = useRef(null);
+  const [pomoValue, setPomoValue] = useState(1);
+
+  // check value input is empty or not
+  const checkDisable = () => {
+    if (inputValue === "") {
+      return true;
+    }
+    return false;
+  };
+
   function handleDecrement() {
     setPomoValue((value) => value - 1);
   }
@@ -211,6 +219,8 @@ const ToDoForm = (props) => {
     props.onSubmit({
       id: Math.floor(Math.random() * 100),
       text: inputValue,
+      pomo: pomoValue,
+      currentPomo: 0,
     });
     setInputValue("");
     settingInfo.setShowInputTask((prev) => !prev);
@@ -286,6 +296,7 @@ const ToDoForm = (props) => {
                 className={
                   inputValue ? classes.saveButtonOn : classes.saveButton
                 }
+                disabled={checkDisable()}
                 onClick={handleSubmit}
               >
                 Save
