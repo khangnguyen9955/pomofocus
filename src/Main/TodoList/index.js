@@ -80,10 +80,10 @@ const useStyles = makeStyles(() => ({
     marginLeft: 4,
   },
 }));
-const TodoList = () => {
+const TodoList = ({ todos, setTodos }) => {
   const classes = useStyles();
   const settingInfo = useContext(settingContext);
-  const [todos, setTodos] = useState([]);
+  const [newTodoCount, setNewTodoCount] = useState([]);
   function handleAddTaskButton() {
     settingInfo.setShowInputTask((prev) => !prev);
   }
@@ -95,7 +95,6 @@ const TodoList = () => {
     const newTodo = [todo, ...todos];
     setTodos(newTodo);
   };
-
   return (
     <div className={classes.containerTodoList}>
       <div className={classes.containerTasks}>
@@ -106,7 +105,7 @@ const TodoList = () => {
           </button>
         </div>
       </div>
-      <TodoItem todos={todos} />
+      <TodoItem todos={todos} setTodos={setTodos} />
       {settingInfo.showInputTask ? (
         <ToDoForm onSubmit={addTodo} />
       ) : (
