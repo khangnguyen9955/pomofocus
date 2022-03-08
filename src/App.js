@@ -3,7 +3,7 @@ import HomePage from "./Main";
 import SettingContext from "./SettingContext";
 
 function App() {
-  const [pomoMinute, setPomoMinute] = useState(25);
+  const [pomoMinute, setPomoMinute] = useState(0.05);
   const [shortBreakMinute, setShortBreakMinute] = useState(5);
   const [longBreakMinute, setLongBreakMinute] = useState(15);
   const [showSetting, setShowSetting] = useState(false);
@@ -18,7 +18,10 @@ function App() {
     useState(shortBreakMinute);
   const [previousValueLong, setPreviousValueLong] = useState(longBreakMinute);
   const [showInputTask, setShowInputTask] = useState(false);
-
+  const [focusTodoId, setFocusTodoId] = useState({
+    id: null,
+    count: 0,
+  });
   return (
     <div>
       <main>
@@ -52,6 +55,8 @@ function App() {
             setPreviousValueLong,
             showInputTask,
             setShowInputTask,
+            focusTodoId,
+            setFocusTodoId,
           }}
         >
           <HomePage />

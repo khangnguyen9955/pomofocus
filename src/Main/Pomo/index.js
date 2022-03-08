@@ -127,7 +127,9 @@ const Pomodoro = () => {
   const optionRef = useRef(option);
   const playRef = useRef(play);
   const secondRef = useRef(second);
-
+  // test
+  const testRef = useRef({}).current;
+  testRef.id = settingInfo.focusTodoId.id;
   let totalSeconds;
   if (option === 0) {
     totalSeconds = settingInfo.pomoMinute * 60;
@@ -228,12 +230,19 @@ const Pomodoro = () => {
       playRef.current = !playRef.current;
       setPlay(playRef.current);
     }
+
     defaultValue(optionRef.current);
     const interval = setInterval(() => {
       if (playRef.current === false) {
         return;
       }
       if (secondRef.current === 0) {
+        if (testRef != null) {
+          settingInfo.setFocusTodoId((prev) => ({
+            count: prev.count + 1,
+            id: prev.id,
+          }));
+        }
         return changeOption();
       }
       count();
@@ -242,7 +251,6 @@ const Pomodoro = () => {
       clearInterval(interval);
     };
   }, []);
-
   const handleStart = () => {
     setPlay((play) => !play);
     playRef.current = !playRef.current;

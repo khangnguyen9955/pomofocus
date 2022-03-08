@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { makeStyles } from "@mui/styles";
 import DoneIcon from "@mui/icons-material/Done";
+import settingContext from "../../SettingContext";
 
 const useStyles = makeStyles(() => ({
   containerItem: {
@@ -79,18 +80,19 @@ const useStyles = makeStyles(() => ({
     marginLeft: 2,
   },
 }));
-const TodoItem = ({ todos }) => {
-  const [focus, setFocus] = useState({
-    id: null,
-  });
-  // test get index and pomo value of focused item
-  // useEffect(() => {
-  //   console.log("focus", focus);
-  //   console.log(todos);
-  //   const newa = todos.filter((item) => item.id === focus);
-  //   test = newa[0].pomo;
-  //   console.log(test);
-  // }, [focus]);
+const TodoItem = ({ todos, setTodos }) => {
+  const newTodo = [...todos];
+  const settingInfo = useContext(settingContext);
+
+  useEffect(() => {
+    if (settingInfo.focusTodoId.id != null) {
+      const currentItem = newTodo.filter(
+        (item) => item.id === settingInfo.focusTodoId.id
+      );
+      currentItem[0].currentPomo = settingInfo.focusTodoId.count;
+      setTodos(newTodo);
+    }
+  }, [settingInfo.focusTodoId]);
   const classes = useStyles();
   return (
     <>
@@ -98,12 +100,17 @@ const TodoItem = ({ todos }) => {
         <div key={index}>
           <div
             className={
-              todo.id === focus
+              todo.id === settingInfo.focusTodoId.id
                 ? classes.containerItemFocused
                 : classes.containerItem
             }
             key={todo.id}
-            onClick={() => setFocus(todo.id)}
+            onClick={() =>
+              settingInfo.setFocusTodoId({
+                count: todo.currentPomo,
+                id: todo.id,
+              })
+            }
           >
             <div className={classes.layerItem}>
               <div className={classes.containerItemLeft}>
@@ -117,6 +124,7 @@ const TodoItem = ({ todos }) => {
               <div className={classes.containerItemRight}>
                 <span className={classes.countPomo}>
                   {todo.currentPomo}
+
                   <span className={classes.totalPomo}>/ {todo.pomo}</span>
                 </span>
                 <div>

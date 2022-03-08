@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import Pomodoro from "./Pomo";
 import { makeStyles } from "@mui/styles";
 import Header from "../Header";
@@ -28,6 +28,11 @@ const useStyles = makeStyles(() => ({
 const HomePage = () => {
   const classes = useStyles();
   const settingInfo = useContext(settingContext);
+
+  // Refactor todo list
+  const [todos, setTodos] = useState([]);
+  // Refactor pomo
+
   return (
     <div className={classes.container}>
       <div className={classes.alignArea}>
@@ -35,7 +40,7 @@ const HomePage = () => {
         <div className={classes.containerLayer}>
           <Pomodoro />
           {settingInfo.showSetting && <Setting />}
-          <TodoList />
+          <TodoList todos={todos} setTodos={setTodos} />
         </div>
       </div>
     </div>
