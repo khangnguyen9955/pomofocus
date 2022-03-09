@@ -3,7 +3,7 @@ import HomePage from "./Main";
 import SettingContext from "./SettingContext";
 
 function App() {
-  const [pomoMinute, setPomoMinute] = useState(0.05);
+  const [pomoMinute, setPomoMinute] = useState(25);
   const [shortBreakMinute, setShortBreakMinute] = useState(5);
   const [longBreakMinute, setLongBreakMinute] = useState(15);
   const [showSetting, setShowSetting] = useState(false);
