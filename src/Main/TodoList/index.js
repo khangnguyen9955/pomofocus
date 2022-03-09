@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -83,11 +83,68 @@ const useStyles = makeStyles(() => ({
 const TodoList = ({ todos, setTodos }) => {
   const classes = useStyles();
   const settingInfo = useContext(settingContext);
-  const [newTodoCount, setNewTodoCount] = useState([]);
+  const [finishAt, setFinishAt] = useState(null);
+  const [totalPomo, setTotalPomo] = useState(null);
+  const [act, setAct] = useState(null);
   function handleAddTaskButton() {
     settingInfo.setShowInputTask((prev) => !prev);
   }
+  function calculateFinishAt(pomo, totalPomo, act) {
+    let today = new Date();
+    let hour = today.getHours();
+    let minute = today.getMinutes();
+    let pomoHour = pomo / 60;
+    let pomoMinute = pomo % 60;
+    let breakMinute = (totalPomo - 1) * settingInfo.shortBreakMinute;
+    let actCalculate;
+    totalPomo > 1 && act > 0
+      ? (actCalculate =
+          act * settingInfo.pomoMinute +
+          (act - 1) * settingInfo.shortBreakMinute)
+      : (actCalculate =
+          act * settingInfo.pomoMinute + act * settingInfo.shortBreakMinute);
+    let totalHour = parseInt(hour) + pomoHour;
+    let totalMinute =
+      parseInt(minute) + pomoMinute + breakMinute - actCalculate;
 
+    if (totalMinute >= 60) {
+      totalHour++;
+      totalMinute = totalMinute - 60;
+      if (totalHour >= 24) {
+        totalHour = Math.floor(totalHour - 24);
+      }
+      if (totalHour < 10) {
+        totalHour = "0" + totalHour;
+      }
+      if (totalMinute < 10) {
+        totalMinute = "0" + totalMinute;
+      }
+    }
+    let time = Math.floor(totalHour) + ":" + totalMinute;
+    return time;
+  }
+
+  useEffect(() => {
+    let getTotalPomo = 0;
+    let getAct = 0;
+    todos.map((todo) => {
+      todo.pomo < todo.currentPomo
+        ? (getTotalPomo += todo.currentPomo)
+        : (getTotalPomo += todo.pomo);
+      getAct += todo.currentPomo;
+    });
+    setAct(getAct);
+    setTotalPomo(getTotalPomo);
+    if (getTotalPomo > 0) {
+      setFinishAt(
+        calculateFinishAt(
+          getTotalPomo * settingInfo.pomoMinute,
+          getTotalPomo,
+          act
+        )
+      );
+    }
+  }, [todos, settingInfo]);
   const addTodo = (todo) => {
     if (!todo.text) {
       return;
@@ -118,22 +175,24 @@ const TodoList = ({ todos, setTodos }) => {
           </Typography>
         </div>
       )}
-      <div className={classes.containerEstimation}>
-        <div className={classes.estimation}>
-          <div className={classes.estimationItem}>
-            Est:
-            <span className={classes.estimationValue}>1</span>
-          </div>
-          <div className={classes.estimationItem}>
-            Act:
-            <span className={classes.estimationValue}>0</span>
-          </div>
-          <div className={classes.estimationItem}>
-            Finish at
-            <span className={classes.estimationValue}>23:05</span>
+      {todos.length > 0 && (
+        <div className={classes.containerEstimation}>
+          <div className={classes.estimation}>
+            <div className={classes.estimationItem}>
+              Est:
+              <span className={classes.estimationValue}>{totalPomo}</span>
+            </div>
+            <div className={classes.estimationItem}>
+              Act:
+              <span className={classes.estimationValue}>{act}</span>
+            </div>
+            <div className={classes.estimationItem}>
+              Finish at
+              <span className={classes.estimationValue}>{finishAt}</span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
