@@ -10,7 +10,7 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { Box } from "@mui/system";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
-import SettingContext from "../../SettingContext";
+import { SettingContext } from "../../context/SettingContext";
 
 const StyledLinearProgress = styled(LinearProgress)(() => ({
   [`&.${linearProgressClasses.colorPrimary}`]: {
@@ -141,6 +141,7 @@ const Pomodoro = () => {
   let percent = (1 - second / totalSeconds) * 100;
   const minute = Math.floor(second / 60);
   let seconds = second % 60;
+
   function count() {
     secondRef.current--;
     setSecond(secondRef.current);

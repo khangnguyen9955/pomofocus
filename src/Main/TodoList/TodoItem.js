@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { makeStyles } from "@mui/styles";
 import DoneIcon from "@mui/icons-material/Done";
-import settingContext from "../../SettingContext";
+import { SettingContext } from "../../context/SettingContext";
 
 const useStyles = makeStyles(() => ({
   containerItem: {
@@ -82,7 +82,7 @@ const useStyles = makeStyles(() => ({
 }));
 const TodoItem = ({ todos, setTodos }) => {
   const newTodo = [...todos];
-  const settingInfo = useContext(settingContext);
+  const settingInfo = useContext(SettingContext);
 
   useEffect(() => {
     if (settingInfo.focusTodoId.id != null) {
@@ -128,7 +128,7 @@ const TodoItem = ({ todos, setTodos }) => {
                   <span className={classes.totalPomo}>/ {todo.pomo}</span>
                 </span>
                 <div>
-                  <div>c</div>
+                  <div></div>
                 </div>
               </div>
             </div>

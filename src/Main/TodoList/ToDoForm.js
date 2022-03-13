@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { makeStyles } from "@mui/styles";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import settingContext from "../../SettingContext";
+import { SettingContext } from "../../context/SettingContext";
 
 const useStyles = makeStyles(() => ({
   containerForm: {
@@ -191,7 +191,7 @@ const useStyles = makeStyles(() => ({
 
 const ToDoForm = (props) => {
   const classes = useStyles();
-  const settingInfo = useContext(settingContext);
+  const settingInfo = useContext(SettingContext);
   const [inputValue, setInputValue] = useState("");
   const [pomoValue, setPomoValue] = useState(1);
 
@@ -214,6 +214,7 @@ const ToDoForm = (props) => {
   function handleCancelInput() {
     settingInfo.setShowInputTask((prev) => !prev);
   }
+
   const handleSubmit = (e) => {
     e.preventDefault();
     props.onSubmit({

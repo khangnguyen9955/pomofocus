@@ -1,9 +1,9 @@
 import { Grid, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useContext, useEffect, useState } from "react";
-import SettingContext from "../../SettingContext";
 import { makeStyles } from "@mui/styles";
 import ClearIcon from "@mui/icons-material/Clear";
+import { SettingContext } from "../../context/SettingContext";
 
 const useStyles = makeStyles(() => ({
   containerSetting: {
@@ -176,9 +176,11 @@ const Setting = ({ showSetting }) => {
   const [shortBreak, setShortBreak] = useState(settingInfo.shortBreakMinute);
   const [longBreak, setLongBreak] = useState(settingInfo.longBreakMinute);
   const [disabled, setDisabled] = useState(false);
+
   function handleClickButton() {
     setAuto((prev) => !prev);
   }
+
   const checkValueChange = () => {
     if (settingInfo.pomoMinute != pomodoro) {
       settingInfo.setPreviousValuePomo(settingInfo.pomoMinute);
