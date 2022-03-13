@@ -4,8 +4,8 @@ import { makeStyles } from "@mui/styles";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ToDoForm from "./ToDoForm";
-import settingContext from "../../SettingContext";
 import TodoItem from "./TodoItem";
+import { SettingContext } from "../../context/SettingContext";
 
 const useStyles = makeStyles(() => ({
   containerTodoList: {
@@ -82,13 +82,15 @@ const useStyles = makeStyles(() => ({
 }));
 const TodoList = ({ todos, setTodos }) => {
   const classes = useStyles();
-  const settingInfo = useContext(settingContext);
+  const settingInfo = useContext(SettingContext);
   const [finishAt, setFinishAt] = useState(null);
   const [totalPomo, setTotalPomo] = useState(null);
   const [act, setAct] = useState(null);
+
   function handleAddTaskButton() {
     settingInfo.setShowInputTask((prev) => !prev);
   }
+
   function calculateFinishAt(pomo, totalPomo, act) {
     let today = new Date();
     let hour = today.getHours();
