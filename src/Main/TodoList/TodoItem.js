@@ -1,7 +1,9 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { makeStyles } from "@mui/styles";
 import DoneIcon from "@mui/icons-material/Done";
 import { SettingContext } from "../../context/SettingContext";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import EditForm from "./EditForm";
 
 const useStyles = makeStyles(() => ({
   containerItem: {
@@ -16,6 +18,9 @@ const useStyles = makeStyles(() => ({
     boxSizing: "border-box",
     borderLeft: "6px solid transparent",
     transition: "unset",
+    "&:hover": {
+      borderLeft: "6px solid rgb(211,211,211)",
+    },
   },
   containerItemFocused: {
     width: "100%",
@@ -79,11 +84,71 @@ const useStyles = makeStyles(() => ({
     fontSize: 14,
     marginLeft: 2,
   },
+  editButtonContainer: {
+    width: 30,
+    paddingRight: 14,
+    textAlign: "center",
+  },
+  editButton: {
+    cursor: "pointer",
+    border: "1px solid rgb(223,223,223)",
+    borderRadius: 4,
+    padding: "2px 4px",
+    backgroundColor: "white",
+    width: 25,
+    "&:hover": {
+      backgroundColor: "rgb(211,211,211)",
+    },
+    zIndex: 1000000000,
+  },
+  edit: {
+    opacity: 0.4,
+    marginTop: 3,
+    color: "black",
+  },
 }));
 const TodoItem = ({ todos, setTodos }) => {
   const newTodo = [...todos];
   const settingInfo = useContext(SettingContext);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editForm, setEditForm] = useState({});
+  // const editRef = useRef(null);
+  // still not fix bug so comment these things
+  // function useOutsideAlerter(ref) {
+  //   useEffect(() => {
+  //     function handleClickOutside(event) {
+  //       if (ref.current && !ref.current.contains(event.target)) {
+  //         setShowEditForm(false);
+  //       }
+  //     }
+  //
+  //     document.addEventListener("mousedown", handleClickOutside);
+  //     return () => {
+  //       document.removeEventListener("mousedown", handleClickOutside);
+  //     };
+  //   }, [ref]);
+  // }
+  //
+  //
+  // useOutsideAlerter(editRef);
+  const editTodo = (todo) => {
+    if (!todo.text) {
+      return;
+    }
+    const newList = todos.map((item) => {
+      if (item.id === todo.id) {
+        const updateItem = { ...todo, completeEdit: true };
+        return updateItem;
+      }
+      return item;
+    });
+    setTodos(newList);
+  };
 
+  const deleteTodo = (id) => {
+    const newList = [...todos].filter((todo) => todo.id !== id);
+    setTodos(newList);
+  };
   useEffect(() => {
     if (settingInfo.focusTodoId.id != null) {
       const currentItem = newTodo.filter(
@@ -98,41 +163,73 @@ const TodoItem = ({ todos, setTodos }) => {
     <>
       {todos.map((todo, index) => (
         <div key={index}>
-          <div
-            className={
-              todo.id === settingInfo.focusTodoId.id
-                ? classes.containerItemFocused
-                : classes.containerItem
-            }
-            key={todo.id}
-            onClick={() =>
-              settingInfo.setFocusTodoId({
-                count: todo.currentPomo,
-                id: todo.id,
-              })
-            }
-          >
-            <div className={classes.layerItem}>
-              <div className={classes.containerItemLeft}>
-                <div className={classes.itemTick}>
-                  <DoneIcon
-                    sx={{ width: 22, height: 22, margin: 0, border: "none" }}
-                  />
+          {todo.completeEdit === true && (
+            <div
+              className={
+                todo.id === settingInfo.focusTodoId.id
+                  ? classes.containerItemFocused
+                  : classes.containerItem
+              }
+              key={todo.id}
+              onClick={() =>
+                settingInfo.setFocusTodoId({
+                  count: todo.currentPomo,
+                  id: todo.id,
+                })
+              }
+            >
+              <div className={classes.layerItem}>
+                <div className={classes.containerItemLeft}>
+                  <div className={classes.itemTick}>
+                    <DoneIcon
+                      sx={{ width: 22, height: 22, margin: 0, border: "none" }}
+                    />
+                  </div>
+                  <span className={classes.itemTitle}>{todo.text}</span>
                 </div>
-                <span className={classes.itemTitle}>{todo.text}</span>
-              </div>
-              <div className={classes.containerItemRight}>
-                <span className={classes.countPomo}>
-                  {todo.currentPomo}
+                <div className={classes.containerItemRight}>
+                  <span className={classes.countPomo}>
+                    {todo.currentPomo}
 
-                  <span className={classes.totalPomo}>/ {todo.pomo}</span>
-                </span>
-                <div>
-                  <div></div>
+                    <span className={classes.totalPomo}>/ {todo.pomo}</span>
+                  </span>
+                  <div className={classes.editButtonContainer}>
+                    <div
+                      className={classes.editButton}
+                      onClick={() => {
+                        setShowEditForm(true);
+                        setEditForm((prev) => ({
+                          ...prev,
+                          todo: todo,
+                          id: todo.id,
+                        }));
+                        todo.completeEdit = false;
+                      }}
+                    >
+                      <MoreVertIcon
+                        className={classes.edit}
+                        sx={{ width: 25 }}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
+
+          {showEditForm && (
+            <>
+              {editForm.id === todo.id && (
+                <EditForm
+                  onSubmit={editTodo}
+                  todos={editForm.todo}
+                  setShowEditForm={setShowEditForm}
+                  deleteTodo={deleteTodo}
+                  // editRef={editRef}
+                />
+              )}
+            </>
+          )}
         </div>
       ))}
     </>
