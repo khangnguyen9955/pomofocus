@@ -151,7 +151,7 @@ const TodoList = ({ todos, setTodos }) => {
     if (!todo.text) {
       return;
     }
-    const newTodo = [todo, ...todos];
+    const newTodo = [...todos, todo];
     setTodos(newTodo);
   };
   return (

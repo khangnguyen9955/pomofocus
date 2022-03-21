@@ -130,8 +130,6 @@ const useStyles = makeStyles(() => ({
     color: "rgb(136,136,136)",
     fontWeight: "bold",
     boxShadow: "none",
-    visibility: "hidden",
-    pointerEvents: "none",
   },
   cancelButton: {
     alignItems: "center",
@@ -189,11 +187,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const ToDoForm = (props) => {
+const EditForm = (props) => {
   const classes = useStyles();
   const settingInfo = useContext(SettingContext);
-  const [inputValue, setInputValue] = useState("");
-  const [pomoValue, setPomoValue] = useState(1);
+  const [inputValue, setInputValue] = useState(props.todos.text);
+  const [pomoValue, setPomoValue] = useState(props.todos.pomo);
 
   // check value input is empty or not
   const checkDisable = () => {
@@ -212,103 +210,104 @@ const ToDoForm = (props) => {
   }
 
   function handleCancelInput() {
-    settingInfo.setShowInputTask((prev) => !prev);
+    props.setShowEditForm((prev) => !prev);
+    props.todos.completeEdit = true;
   }
 
   const handleSubmit = (e) => {
     e.preventDefault();
     props.onSubmit({
-      id: Math.floor(Math.random() * 100),
+      ...props.todos,
       text: inputValue,
       pomo: pomoValue,
-      currentPomo: 0,
       completeEdit: true,
     });
-    setInputValue("");
-    settingInfo.setShowInputTask((prev) => !prev);
+    props.setShowEditForm((prev) => !prev);
   };
   return (
     <>
-      {settingInfo.showInputTask && (
-        <div className={classes.containerForm}>
-          <div className={classes.containerInputForm}>
-            <div className={classes.inputForm}>
-              <div className={classes.containerValueItem}>
-                <div className={classes.containerInput}>
-                  <div className={classes.layerInput}>
-                    <input
-                      type="text"
-                      defaultValue={inputValue}
-                      onInput={(e) => setInputValue(e.target.value)}
-                      placeholder="What are you working on?"
-                      className={
-                        inputValue
-                          ? classes.inputValue
-                          : classes.inputPlaceholder
-                      }
-                    />
-                  </div>
+      <div
+        className={classes.containerForm}
+        // ref={props.editRef}
+      >
+        <div className={classes.containerInputForm}>
+          <div className={classes.inputForm}>
+            <div className={classes.containerValueItem}>
+              <div className={classes.containerInput}>
+                <div className={classes.layerInput}>
+                  <input
+                    type="text"
+                    defaultValue={inputValue}
+                    onInput={(e) => setInputValue(e.target.value)}
+                    placeholder="What are you working on?"
+                    className={
+                      inputValue ? classes.inputValue : classes.inputPlaceholder
+                    }
+                  />
                 </div>
               </div>
-              <div className={classes.containerValueItem}>
-                <div className={classes.containerPomoValue}>
-                  <div className={classes.layerPomo}>
-                    <div className={classes.estimatePomo}>
-                      <span className={classes.titleEstimation}>
-                        Est Pomodoros
-                        <div className={classes.unknown}>Act</div>
-                      </span>
-                    </div>
-                    <input
-                      className={classes.inputPomo}
-                      value={pomoValue}
-                      onInput={(event) =>
-                        setPomoValue(parseInt(event.target.value))
-                      }
-                      type="number"
-                    />
-                    <button
-                      className={classes.buttonUpDown}
-                      onClick={handleIncrement}
-                    >
-                      <ArrowDropUpIcon className={classes.buttonSign} />
-                    </button>
-                    <button
-                      className={classes.buttonUpDown}
-                      onClick={handleDecrement}
-                    >
-                      <ArrowDropDownIcon className={classes.buttonSign} />
-                    </button>
+            </div>
+            <div className={classes.containerValueItem}>
+              <div className={classes.containerPomoValue}>
+                <div className={classes.layerPomo}>
+                  <div className={classes.estimatePomo}>
+                    <span className={classes.titleEstimation}>
+                      Est Pomodoros
+                      <div className={classes.unknown}>Act</div>
+                    </span>
                   </div>
+                  <input
+                    className={classes.inputPomo}
+                    value={pomoValue}
+                    onInput={(event) =>
+                      setPomoValue(parseInt(event.target.value))
+                    }
+                    type="number"
+                  />
+                  <button
+                    className={classes.buttonUpDown}
+                    onClick={handleIncrement}
+                  >
+                    <ArrowDropUpIcon className={classes.buttonSign} />
+                  </button>
+                  <button
+                    className={classes.buttonUpDown}
+                    onClick={handleDecrement}
+                  >
+                    <ArrowDropDownIcon className={classes.buttonSign} />
+                  </button>
                 </div>
               </div>
-              {/*<div className={classes.containerValueItem}></div> this use for Add note and Add project in furture update*/}
             </div>
-          </div>
-          <div className={classes.containerButtonForm}>
-            <button className={classes.buttonDelete}>Delete</button>
-            <div>
-              <button
-                className={classes.cancelButton}
-                onClick={handleCancelInput}
-              >
-                Cancel
-              </button>
-              <button
-                className={
-                  inputValue ? classes.saveButtonOn : classes.saveButton
-                }
-                disabled={checkDisable()}
-                onClick={handleSubmit}
-              >
-                Save
-              </button>
-            </div>
+            {/*<div className={classes.containerValueItem}></div> this use for Add note and Add project in furture update*/}
           </div>
         </div>
-      )}
+        <div className={classes.containerButtonForm}>
+          <button
+            className={classes.buttonDelete}
+            onClick={() => props.deleteTodo(props.todos.id)}
+          >
+            Delete
+          </button>
+          <div>
+            <button
+              className={classes.cancelButton}
+              onClick={handleCancelInput}
+            >
+              Cancel
+            </button>
+            <button
+              className={inputValue ? classes.saveButtonOn : classes.saveButton}
+              disabled={checkDisable()}
+              onClick={handleSubmit}
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
 
-export default ToDoForm;
+export default EditForm;

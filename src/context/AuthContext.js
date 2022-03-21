@@ -11,7 +11,7 @@ export default function AuthProvider({ children }) {
   const email = user?.email;
 
   useEffect(() => {
-    const unsubcribed = onAuthStateChanged(auth, (user) => {
+    const unsubscribed = onAuthStateChanged(auth, (user) => {
       if (user) {
         let userRef = doc(db, "users", user.uid);
         onSnapshot(userRef, (snapshot) => {
@@ -24,7 +24,7 @@ export default function AuthProvider({ children }) {
       }
     });
     return () => {
-      unsubcribed();
+      unsubscribed();
     };
   }, []);
   return (

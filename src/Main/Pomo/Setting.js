@@ -170,16 +170,10 @@ const useStyles = makeStyles(() => ({
 
 const Setting = ({ showSetting }) => {
   const settingInfo = useContext(SettingContext);
-  const [auto, setAuto] = useState(false);
-  const [intervalBreak, setIntervalBreak] = useState(0);
   const [pomodoro, setPomodoro] = useState(settingInfo.pomoMinute);
   const [shortBreak, setShortBreak] = useState(settingInfo.shortBreakMinute);
   const [longBreak, setLongBreak] = useState(settingInfo.longBreakMinute);
   const [disabled, setDisabled] = useState(false);
-
-  function handleClickButton() {
-    setAuto((prev) => !prev);
-  }
 
   const checkValueChange = () => {
     if (settingInfo.pomoMinute != pomodoro) {
@@ -198,11 +192,23 @@ const Setting = ({ showSetting }) => {
       settingInfo.setSettingConfirm(false);
     }
   };
+
   // need to calculate the current pomo vs setting pomo not stop pomo
   const handleSubmitSetting = () => {
     checkValueChange();
     settingInfo.setShowSetting(false);
   };
+
+  const handleSetAutoBreak = () => {
+    settingInfo.setAutoBreak((prev) => !prev);
+  };
+  const handleSetAutoPomo = () => {
+    settingInfo.setAutoPomo((prev) => !prev);
+  };
+  // useEffect(() => {
+  //     console.log("ok luon", shortBreak);
+  //     console.log("ok ", settingInfo.shortBreakMinute);
+  // }, [checkValueChange]);
   const classes = useStyles();
   useEffect(() => {
     if (
@@ -316,11 +322,19 @@ const Setting = ({ showSetting }) => {
                       Auto start Breaks?
                     </Typography>
                     <div
-                      className={auto ? classes.autoButtonOn : classes.button}
-                      onClick={handleClickButton}
+                      className={
+                        settingInfo.autoBreak
+                          ? classes.autoButtonOn
+                          : classes.button
+                      }
+                      onClick={handleSetAutoBreak}
                     >
                       <div
-                        className={auto ? classes.autoCircleOn : classes.circle}
+                        className={
+                          settingInfo.autoBreak
+                            ? classes.autoCircleOn
+                            : classes.circle
+                        }
                       ></div>
                     </div>
                   </Box>
@@ -343,11 +357,19 @@ const Setting = ({ showSetting }) => {
                       Auto start Pomodoro?
                     </Typography>
                     <div
-                      className={auto ? classes.autoButtonOn : classes.button}
-                      onClick={handleClickButton}
+                      className={
+                        settingInfo.autoPomo
+                          ? classes.autoButtonOn
+                          : classes.button
+                      }
+                      onClick={handleSetAutoPomo}
                     >
                       <div
-                        className={auto ? classes.autoCircleOn : classes.circle}
+                        className={
+                          settingInfo.autoPomo
+                            ? classes.autoCircleOn
+                            : classes.circle
+                        }
                       ></div>
                     </div>
                   </Box>
@@ -372,8 +394,11 @@ const Setting = ({ showSetting }) => {
                     <div className={classes.button}>
                       <input
                         type="number"
-                        defaultValue={intervalBreak}
+                        defaultValue={settingInfo.longBreakInterval}
                         className={classes.inputValueInterval}
+                        onChange={(e) => {
+                          settingInfo.setLongBreakInterval(e.target.value);
+                        }}
                       />
                     </div>
                   </Box>

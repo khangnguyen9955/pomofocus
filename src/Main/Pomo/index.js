@@ -11,6 +11,8 @@ import { Box } from "@mui/system";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { SettingContext } from "../../context/SettingContext";
+import { AuthContext } from "../../context/AuthContext";
+import { updateUser } from "../../firebase/service";
 
 const StyledLinearProgress = styled(LinearProgress)(() => ({
   [`&.${linearProgressClasses.colorPrimary}`]: {
@@ -113,7 +115,13 @@ const useStyles = makeStyles({
   },
 });
 
-const Pomodoro = () => {
+const Pomodoro = ({ todos }) => {
+  // user
+  const { user } = useContext(AuthContext);
+
+  const currentSession = user?.currentSession;
+
+  // setting
   const settingInfo = useContext(SettingContext);
   const classes = useStyles();
   const [second, setSecond] = useState(0);
@@ -123,13 +131,15 @@ const Pomodoro = () => {
   const [pomoChange, setPomoChange] = useState(false);
   const [shortChange, setShortChange] = useState(false);
   const [longChange, setLongChange] = useState(false);
+
   // ref
   const optionRef = useRef(option);
   const playRef = useRef(play);
   const secondRef = useRef(second);
-  // test
-  const testRef = useRef({}).current;
-  testRef.id = settingInfo.focusTodoId.id;
+
+  //  todo ref
+  const todoRef = useRef({}).current;
+  todoRef.id = settingInfo.focusTodoId.id;
   let totalSeconds;
   if (option === 0) {
     totalSeconds = settingInfo.pomoMinute * 60;
@@ -174,6 +184,7 @@ const Pomodoro = () => {
     } else if (optionRef.current === 1) {
       if (settingInfo.previousValueShort != settingInfo.shortBreakMinute) {
         setShortChange((prev) => !prev);
+        console.log(" day loi");
       }
     } else {
       if (settingInfo.previousValueLong != settingInfo.longBreakMinute) {
@@ -205,16 +216,48 @@ const Pomodoro = () => {
       }
     }
   }, [longChange]);
-
   // what is the option current of the user? and any thing at that option change? if yes set render to true
   useEffect(() => {
     check();
   }, [settingInfo.settingConfirm]);
-
   useEffect(() => {
     defaultValue(optionRef.current);
   }, [render]);
-
+  // new Date(time.seconds * 1000 + time.nanoseconds/1000000) convert to date
+  const addNewTask = (e) => {
+    let today = new Date();
+    let date =
+      today.getFullYear() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getDate();
+    if (e === null) {
+      const newTaskList = [
+        ...currentSession.taskList,
+        {
+          title: "",
+          time: settingInfo.pomoMinute,
+          date: date,
+        },
+      ];
+      updateUser(user.uid, {
+        currentSession: { ...currentSession, taskList: newTaskList },
+      });
+    } else {
+      const newTaskList = [
+        ...currentSession.taskList,
+        {
+          title: e[0].text ? e[0].text : "",
+          time: settingInfo.pomoMinute,
+          date: today,
+        },
+      ];
+      updateUser(user.uid, {
+        currentSession: { ...currentSession, taskList: newTaskList },
+      });
+    }
+  };
   useEffect(() => {
     function changeOption() {
       const nextOption = optionRef.current === 0 ? 1 : 0;
@@ -225,25 +268,43 @@ const Pomodoro = () => {
 
       setOption(nextOption);
       optionRef.current = nextOption;
-
       setSecond(nextSecond);
       secondRef.current = nextSecond;
-      playRef.current = !playRef.current;
-      setPlay(playRef.current);
+      // // the bug occurs when we go in useEffect then the autoBreak maybe referenced to the default value of settingInfo
+      // got the problem, in this useEffect just run 1 time, so we need to use the dependency is another useEffect take settinginfo.autobreak is a dependency
+      // fixed by pass the dependency in this useEFfect is settinginfo.autobreak
+      if (nextOption === 1 && settingInfo.autoBreak) {
+        defaultValue(optionRef.current);
+        setPlay(true);
+        playRef.current = true;
+      } else if (nextOption === 0 && settingInfo.autoPomo) {
+        defaultValue(optionRef.current);
+        setPlay(true);
+        playRef.current = true;
+      } else {
+        defaultValue(optionRef.current);
+      }
     }
 
-    defaultValue(optionRef.current);
     const interval = setInterval(() => {
       if (playRef.current === false) {
         return;
       }
       if (secondRef.current === 0) {
-        if (testRef != null) {
+        if (todoRef !== null) {
           settingInfo.setFocusTodoId((prev) => ({
             count: prev.count + 1,
             id: prev.id,
           }));
         }
+        if (user.uid) {
+          // cho nay bi ket login va k login deu nhan user nen => bug
+          let getItem = todoRef.id
+            ? todos.filter((e) => e.id === todoRef.id)
+            : null;
+          addNewTask(getItem);
+        }
+
         return changeOption();
       }
       count();
@@ -251,7 +312,13 @@ const Pomodoro = () => {
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [
+    settingInfo.autoBreak,
+    settingInfo.pomoMinute,
+    settingInfo.shortBreakMinute,
+    settingInfo.longBreakMinute,
+  ]);
+
   const handleStart = () => {
     setPlay((play) => !play);
     playRef.current = !playRef.current;

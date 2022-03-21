@@ -4,12 +4,13 @@ import { AuthContext } from "./AuthContext";
 export const SettingContext = createContext();
 export default function SettingProvider({ children }) {
   const { user } = useContext(AuthContext);
-  const [pomoMinute, setPomoMinute] = useState(25);
+  const [pomoMinute, setPomoMinute] = useState(0.05);
   const [shortBreakMinute, setShortBreakMinute] = useState(5);
   const [longBreakMinute, setLongBreakMinute] = useState(15);
   const [showSetting, setShowSetting] = useState(false);
   const [autoBreak, setAutoBreak] = useState(false);
   const [autoPomo, setAutoPomo] = useState(false);
+  const [longBreakInterval, setLongBreakInterval] = useState(0);
   const [pomoBackground, setPomoBackground] = useState(true);
   const [shortBackground, setShortBackground] = useState(false);
   const [longBackground, setLongBackground] = useState(false);
@@ -39,6 +40,8 @@ export default function SettingProvider({ children }) {
     setAutoBreak,
     autoPomo,
     setAutoPomo,
+    longBreakInterval,
+    setLongBreakInterval,
     shortBackground,
     pomoBackground,
     longBackground,
@@ -57,6 +60,7 @@ export default function SettingProvider({ children }) {
     setShowInputTask,
     focusTodoId,
     setFocusTodoId,
+    currentSession,
   };
   return (
     <SettingContext.Provider value={value}>{children}</SettingContext.Provider>

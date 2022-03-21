@@ -1,4 +1,5 @@
 import {
+  addDoc,
   doc,
   getDoc,
   serverTimestamp,
@@ -25,7 +26,6 @@ export const addUser = async (uid, data) => {
   await setDoc(userRef, {
     ...data,
     currentSession: {
-      time: 0,
       date: "",
       taskList: [],
     },
@@ -37,13 +37,20 @@ export const addUser = async (uid, data) => {
 
 export const updateUser = async (uid, data) => {
   const userRef = doc(db, "users", uid);
-
   await updateDoc(userRef, {
     ...data,
     modifiedAt: serverTimestamp(),
   });
 };
 //
-// export const addSession = async (uid, data) => {};
-//
+export const addSession = async (uid, data) => {
+  const sessionRef = doc(db, "users", uid, "session");
+
+  await addDoc(sessionRef, {
+    ...data,
+    createdAt: serverTimestamp(),
+    modifiedAt: serverTimestamp(),
+  });
+};
+
 // export const updateCurrentSession = async (uid) => {};

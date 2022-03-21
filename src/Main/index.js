@@ -36,7 +36,7 @@ const HomePage = () => {
       <div className={classes.alignArea}>
         <Header />
         <div className={classes.containerLayer}>
-          <Pomodoro />
+          <Pomodoro todos={todos} />
           {settingInfo.showSetting && <Setting />}
           <TodoList todos={todos} setTodos={setTodos} />
         </div>
