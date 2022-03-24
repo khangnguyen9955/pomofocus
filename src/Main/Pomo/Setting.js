@@ -94,7 +94,7 @@ const useStyles = makeStyles(() => ({
     boxShadow: "rgb(0 0 0 / 15%) 0px 10px 20px, rgb(0 0 0/10%) 0px 3px 6px",
     overflow: "hidden",
     display: "block",
-    transform: "translateY(20px)",
+    transform: "translateY(-175px)",
   },
   backgroundPseudo: {
     backgroundColor: "rgba(0,0,0,0.4)",

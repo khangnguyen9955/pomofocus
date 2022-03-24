@@ -165,12 +165,18 @@ const Pomodoro = ({ todos }) => {
     if (e === 0) {
       setSecond(settingInfo.pomoMinute * 60);
       secondRef.current = settingInfo.pomoMinute * 60;
+      settingInfo.setPomoBackground(true);
     }
     if (e === 1) {
+      settingInfo.setShortBackground(true);
+      settingInfo.setPomoBackground(false);
       setSecond(settingInfo.shortBreakMinute * 60);
       secondRef.current = settingInfo.shortBreakMinute * 60;
     }
     if (e === 2) {
+      settingInfo.setLongBackground(true);
+      settingInfo.setShortBackground(false);
+      settingInfo.setPomoBackground(false);
       setSecond(settingInfo.longBreakMinute * 60);
       secondRef.current = settingInfo.longBreakMinute * 60;
     }
@@ -184,7 +190,6 @@ const Pomodoro = ({ todos }) => {
     } else if (optionRef.current === 1) {
       if (settingInfo.previousValueShort != settingInfo.shortBreakMinute) {
         setShortChange((prev) => !prev);
-        console.log(" day loi");
       }
     } else {
       if (settingInfo.previousValueLong != settingInfo.longBreakMinute) {
@@ -241,18 +246,22 @@ const Pomodoro = ({ todos }) => {
           date: date,
         },
       ];
+      console.log("toi day hk ta");
       updateUser(user.uid, {
         currentSession: { ...currentSession, taskList: newTaskList },
       });
     } else {
+      console.log("loi gi v?", e[0]);
+
       const newTaskList = [
         ...currentSession.taskList,
         {
           title: e[0].text ? e[0].text : "",
           time: settingInfo.pomoMinute,
-          date: today,
+          date: date,
         },
       ];
+
       updateUser(user.uid, {
         currentSession: { ...currentSession, taskList: newTaskList },
       });
@@ -298,11 +307,13 @@ const Pomodoro = ({ todos }) => {
           }));
         }
         if (user.uid) {
+          console.log("user", user);
           // cho nay bi ket login va k login deu nhan user nen => bug
           let getItem = todoRef.id
             ? todos.filter((e) => e.id === todoRef.id)
             : null;
           addNewTask(getItem);
+          console.log(currentSession);
         }
 
         return changeOption();
@@ -317,6 +328,8 @@ const Pomodoro = ({ todos }) => {
     settingInfo.pomoMinute,
     settingInfo.shortBreakMinute,
     settingInfo.longBreakMinute,
+    currentSession,
+    todos,
   ]);
 
   const handleStart = () => {

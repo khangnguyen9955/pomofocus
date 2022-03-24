@@ -20,7 +20,7 @@ export default function AuthProvider({ children }) {
         });
       } else {
         setUser({});
-        setLogin(true);
+        setLogin(false);
       }
     });
     return () => {
@@ -28,7 +28,7 @@ export default function AuthProvider({ children }) {
     };
   }, []);
   return (
-    <AuthContext.Provider value={{ user, uid, email, login }}>
+    <AuthContext.Provider value={{ user, uid, email, login, setLogin }}>
       {children}
     </AuthContext.Provider>
   );

@@ -8,6 +8,7 @@ export default function SettingProvider({ children }) {
   const [shortBreakMinute, setShortBreakMinute] = useState(5);
   const [longBreakMinute, setLongBreakMinute] = useState(15);
   const [showSetting, setShowSetting] = useState(false);
+  const [showReport, setShowReport] = useState(false);
   const [autoBreak, setAutoBreak] = useState(false);
   const [autoPomo, setAutoPomo] = useState(false);
   const [longBreakInterval, setLongBreakInterval] = useState(0);
@@ -36,6 +37,8 @@ export default function SettingProvider({ children }) {
     setLongBreakMinute,
     showSetting,
     setShowSetting,
+    showReport,
+    setShowReport,
     autoBreak,
     setAutoBreak,
     autoPomo,

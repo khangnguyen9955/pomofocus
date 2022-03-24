@@ -223,6 +223,7 @@ const ToDoForm = (props) => {
       pomo: pomoValue,
       currentPomo: 0,
       completeEdit: true,
+      done: false,
     });
     setInputValue("");
     settingInfo.setShowInputTask((prev) => !prev);
