@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -6,6 +6,9 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ToDoForm from "./ToDoForm";
 import TodoItem from "./TodoItem";
 import { SettingContext } from "../../context/SettingContext";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import AddIcon from "@mui/icons-material/Add";
 
 const useStyles = makeStyles(() => ({
   containerTodoList: {
@@ -39,12 +42,7 @@ const useStyles = makeStyles(() => ({
     border: "none",
     color: "white !important",
   },
-  containerListItem: {},
-  listLayer: {},
-  listItem: {},
-  item: {},
-  itemLeft: {},
-  itemRight: {},
+
   containerAddTask: {
     width: "100%",
     height: 60,
@@ -67,7 +65,32 @@ const useStyles = makeStyles(() => ({
     textAlign: "center",
     backgroundColor: "rgba(255,255,255,0.1)",
   },
-  estimation: {},
+  editButton: {
+    borderRadius: 4,
+    opacity: 1,
+    padding: "4px 0px",
+    boxShadow: "rgb(0 0 0 / 15%) 0px 10px 20px, rgb(0 0 0 / 10%) 0px 3px 6px",
+    display: "block",
+    pointerEvents: "auto",
+    position: "absolute",
+    backgroundColor: "white",
+    transform: "translateY(10px)",
+    width: 200,
+    right: 0,
+    zIndex: 1,
+  },
+  editOptions: {
+    color: "rgb(79,43,45)",
+    display: "flex",
+    alignItems: "center",
+    padding: "10px 16px",
+    fontSize: 14,
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: "rgb(211,211,211)",
+    },
+  },
+
   estimationItem: {
     margin: "0px 8px",
     display: "inline-block",
@@ -86,6 +109,25 @@ const TodoList = ({ todos, setTodos }) => {
   const [finishAt, setFinishAt] = useState(null);
   const [totalPomo, setTotalPomo] = useState(null);
   const [act, setAct] = useState(null);
+  const [showEdit, setShowEdit] = useState(false);
+  const editRef = useRef(null);
+
+  function useOutsideAlerter(ref) {
+    useEffect(() => {
+      function handleClickOutside(event) {
+        if (ref.current && !ref.current.contains(event.target)) {
+          setShowEdit(false);
+        }
+      }
+
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [ref]);
+  }
+
+  useOutsideAlerter(editRef);
 
   function handleAddTaskButton() {
     settingInfo.setShowInputTask((prev) => !prev);
@@ -158,10 +200,42 @@ const TodoList = ({ todos, setTodos }) => {
     <div className={classes.containerTodoList}>
       <div className={classes.containerTasks}>
         <Typography sx={{ fontSize: 18, fontWeight: "bold" }}>Tasks</Typography>
-        <div className={classes.containerTasksButton}>
+        <div
+          className={classes.containerTasksButton}
+          onClick={() => {
+            setShowEdit((prev) => !prev);
+          }}
+        >
           <button className={classes.buttonTask}>
             <MoreVertIcon sx={{ width: 25 }} />
           </button>
+
+          {showEdit && (
+            <div className={classes.editButton} ref={editRef}>
+              <div className={classes.editOptions}>
+                <DeleteOutlineIcon
+                  sx={{ opacity: 0.8, width: 20, marginRight: "8px" }}
+                />
+                Clear finished tasks
+              </div>
+              <div className={classes.editOptions}>
+                <DeleteOutlineIcon
+                  sx={{ opacity: 0.8, width: 20, marginRight: "8px" }}
+                />
+                Clear all tasks
+              </div>
+              <div className={classes.editOptions}>
+                <InsertDriveFileIcon
+                  sx={{ opacity: 0.8, width: 20, marginRight: "8px" }}
+                />
+                Save as templates
+              </div>
+              <div className={classes.editOptions}>
+                <AddIcon sx={{ opacity: 0.8, width: 20, marginRight: "8px" }} />
+                Add from templates
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <TodoItem todos={todos} setTodos={setTodos} />

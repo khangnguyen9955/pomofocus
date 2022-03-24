@@ -104,11 +104,12 @@ const useStyles = makeStyles({
 
 const Header = () => {
   const settingInfo = useContext(SettingContext);
-  const [login, setLogin] = useState(false);
+  const {login, setLogin} = useContext(AuthContext);
   const [showProfile, setShowProfile] = useState(false);
   const provider = new GoogleAuthProvider();
-  const { user } = useContext(AuthContext);
+  const {user} = useContext(AuthContext);
   const profileRef = useRef(null);
+
 
   //click outside
   function useOutsideAlerter(ref) {
@@ -144,77 +145,81 @@ const Header = () => {
   };
   const handleLogin = () => {
     signInWithPopup(auth, provider)
-      .then((results) => {
-        const { _tokenResponse, user } = results;
-        checkUserExist(_tokenResponse, user);
-        setLogin(true);
-        console.log("logged in!!");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+        .then((results) => {
+          const {_tokenResponse, user} = results;
+          checkUserExist(_tokenResponse, user);
+          setLogin(true);
+          console.log("logged in!!");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
   };
+
   const classes = useStyles();
   return (
-    <div className={classes.headerContainer}>
-      <div className={classes.header}>
-        <div>
-          <Typography sx={{ fontWeight: "bold", fontSize: 20 }}>
-            Pomofocus
-          </Typography>
-        </div>
+      <div className={classes.headerContainer}>
+        <div className={classes.header}>
+          <div>
+            <Typography sx={{fontWeight: "bold", fontSize: 20}}>
+              Pomofocus
+            </Typography>
+          </div>
 
-        <div className={classes.buttonBar}>
-          <button className={classes.button}>
-            <AssessmentIcon className={classes.imgButton} />
-            <div className={classes.contentButton}>Report</div>
-          </button>
-          <button
-            className={classes.button}
-            onClick={() => settingInfo.setShowSetting(true)}
-          >
-            <SettingsIcon className={classes.imgButton} />
-            <div className={classes.contentButton}>Setting</div>
-          </button>
-          {login ? (
-            <>
-              <div style={{ position: "relative" }}>
-                <div
-                  className={classes.btnLogin}
-                  onClick={() => setShowProfile((prev) => !prev)}
-                >
-                  <img src={user.photoURL} className={classes.imgLogin} />
-                </div>
-                {showProfile && (
-                  <div className={classes.profileContainer} ref={profileRef}>
-                    <div className={classes.profile}>
-                      <PersonIcon className={classes.profileIcon} />
-                      Profile
-                    </div>
-                    <div
-                      className={classes.profile}
-                      onClick={() => {
-                        signOut(auth);
-                        setLogin(false);
-                        setShowProfile((prev) => !prev);
-                      }}
-                    >
-                      <LogoutIcon className={classes.profileIcon} />
-                      Log Out
-                    </div>
-                  </div>
-                )}
-              </div>
-            </>
-          ) : (
-            <button className={classes.button} onClick={handleLogin}>
-              <AccountCircleIcon className={classes.imgButton} />
-              <div className={classes.contentButton}>Login</div>
+          <div className={classes.buttonBar}>
+            <button
+                className={classes.button}
+                onClick={() => settingInfo.setShowReport(true)}
+            >
+              <AssessmentIcon className={classes.imgButton}/>
+              <div className={classes.contentButton}>Report</div>
             </button>
-          )}
+            <button
+                className={classes.button}
+                onClick={() => settingInfo.setShowSetting(true)}
+            >
+              <SettingsIcon className={classes.imgButton}/>
+              <div className={classes.contentButton}>Setting</div>
+            </button>
+            {login ? (
+                <>
+                  <div style={{position: "relative"}}>
+                    <div
+                        className={classes.btnLogin}
+                        onClick={() => setShowProfile((prev) => !prev)}
+                    >
+                      <img src={user.photoURL} className={classes.imgLogin}/>
+                    </div>
+                    {showProfile && (
+                        <div className={classes.profileContainer} ref={profileRef}>
+                          <div className={classes.profile}>
+                            <PersonIcon className={classes.profileIcon}/>
+                            Profile
+                          </div>
+                          <div
+                              className={classes.profile}
+                              onClick={() => {
+                                signOut(auth);
+                                setLogin(false);
+                                setShowProfile((prev) => !prev);
+                              }}
+                          >
+                            <LogoutIcon className={classes.profileIcon}/>
+                            Log Out
+                          </div>
+                        </div>
+                    )}
+                  </div>
+                </>
+            ) : (
+                 <button className={classes.button} onClick={handleLogin}>
+                   <AccountCircleIcon className={classes.imgButton}/>
+                   <div className={classes.contentButton}>Login</div>
+                 </button>
+             )}
+          </div>
         </div>
       </div>
-    </div>
   );
 };
 

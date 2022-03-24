@@ -62,6 +62,23 @@ const useStyles = makeStyles(() => ({
     backgroundColor: "rgb(223,223,223)",
     marginRight: 10,
     borderRadius: "50%",
+    "&:hover": {
+      opacity: 0.7,
+    },
+  },
+  itemTicked: {
+    display: "inline-block",
+    width: 22,
+    height: 22,
+    marginRight: 10,
+    borderRadius: "50%",
+    zIndex: 999999999,
+
+    "&:hover": {
+      opacity: 0.7,
+    },
+    border: "2px solid rgb(217,85,80)",
+    backgroundColor: "rgb(217,85,80)",
   },
   itemTitle: {
     color: "rgb(85,85,85)",
@@ -112,25 +129,8 @@ const TodoItem = ({ todos, setTodos }) => {
   const settingInfo = useContext(SettingContext);
   const [showEditForm, setShowEditForm] = useState(false);
   const [editForm, setEditForm] = useState({});
-  // const editRef = useRef(null);
-  // still not fix bug so comment these things
-  // function useOutsideAlerter(ref) {
-  //   useEffect(() => {
-  //     function handleClickOutside(event) {
-  //       if (ref.current && !ref.current.contains(event.target)) {
-  //         setShowEditForm(false);
-  //       }
-  //     }
-  //
-  //     document.addEventListener("mousedown", handleClickOutside);
-  //     return () => {
-  //       document.removeEventListener("mousedown", handleClickOutside);
-  //     };
-  //   }, [ref]);
-  // }
-  //
-  //
-  // useOutsideAlerter(editRef);
+  const [toggleDone, setToggleDone] = useState(false);
+
   const editTodo = (todo) => {
     if (!todo.text) {
       return;
@@ -149,6 +149,13 @@ const TodoItem = ({ todos, setTodos }) => {
     const newList = [...todos].filter((todo) => todo.id !== id);
     setTodos(newList);
   };
+
+  function handleClickDoneItem(todo) {
+    // when we click one item, that item will be turn on done. and other item not being affected.
+    setToggleDone((prev) => !prev);
+    todo.done = toggleDone;
+  }
+
   useEffect(() => {
     if (settingInfo.focusTodoId.id != null) {
       const currentItem = newTodo.filter(
@@ -180,7 +187,12 @@ const TodoItem = ({ todos, setTodos }) => {
             >
               <div className={classes.layerItem}>
                 <div className={classes.containerItemLeft}>
-                  <div className={classes.itemTick}>
+                  <div
+                    className={
+                      todo.done === true ? classes.itemTicked : classes.itemTick
+                    }
+                    onClick={() => handleClickDoneItem(todo)}
+                  >
                     <DoneIcon
                       sx={{ width: 22, height: 22, margin: 0, border: "none" }}
                     />
