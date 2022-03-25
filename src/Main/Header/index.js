@@ -191,7 +191,11 @@ const Header = () => {
                   className={classes.btnLogin}
                   onClick={() => setShowProfile((prev) => !prev)}
                 >
-                  <img src={user.photoURL} className={classes.imgLogin} />
+                  <img
+                    alt="user-photo"
+                    src={user.photoURL}
+                    className={classes.imgLogin}
+                  />
                 </div>
                 {showProfile && (
                   <div className={classes.profileContainer} ref={profileRef}>
