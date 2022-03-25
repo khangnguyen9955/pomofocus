@@ -157,7 +157,7 @@ const TodoItem = ({ todos, setTodos }) => {
   }
 
   useEffect(() => {
-    if (settingInfo.focusTodoId.id != null) {
+    if (todos.length > 0 && settingInfo.focusTodoId.id != null) {
       const currentItem = newTodo.filter(
         (item) => item.id === settingInfo.focusTodoId.id
       );

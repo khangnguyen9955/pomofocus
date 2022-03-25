@@ -216,97 +216,98 @@ const EditForm = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     props.onSubmit({
-      ...props.todos,
-      text: inputValue,
-      pomo: pomoValue,
-      completeEdit: true,
-    });
+                     ...props.todos,
+                     text: inputValue,
+                     pomo: pomoValue,
+                     completeEdit: true,
+                   });
     props.setShowEditForm((prev) => !prev);
   };
   return (
-    <>
-      <div
-        className={classes.containerForm}
-        // ref={props.editRef}
-      >
-        <div className={classes.containerInputForm}>
-          <div className={classes.inputForm}>
-            <div className={classes.containerValueItem}>
-              <div className={classes.containerInput}>
-                <div className={classes.layerInput}>
-                  <input
-                    type="text"
-                    defaultValue={inputValue}
-                    onInput={(e) => setInputValue(e.target.value)}
-                    placeholder="What are you working on?"
-                    className={
-                      inputValue ? classes.inputValue : classes.inputPlaceholder
-                    }
-                  />
+      <>
+        <div
+            className={classes.containerForm}
+            // ref={props.editRef}
+        >
+          <div className={classes.containerInputForm}>
+            <div className={classes.inputForm}>
+              <div className={classes.containerValueItem}>
+                <div className={classes.containerInput}>
+                  <div className={classes.layerInput}>
+                    <input
+                        type="text"
+                        defaultValue={inputValue}
+                        onInput={(e) => setInputValue(e.target.value)}
+                        placeholder="What are you working on?"
+                        className={
+                          inputValue ? classes.inputValue : classes.inputPlaceholder
+                        }
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className={classes.containerValueItem}>
-              <div className={classes.containerPomoValue}>
-                <div className={classes.layerPomo}>
-                  <div className={classes.estimatePomo}>
+              <div className={classes.containerValueItem}>
+                <div className={classes.containerPomoValue}>
+                  <div className={classes.layerPomo}>
+                    <div className={classes.estimatePomo}>
                     <span className={classes.titleEstimation}>
                       Est Pomodoros
                       <div className={classes.unknown}>Act</div>
                     </span>
+                    </div>
+                    <input
+                        className={classes.inputPomo}
+                        value={pomoValue}
+                        onInput={(event) =>
+                            setPomoValue(parseInt(event.target.value))
+                        }
+                        type="number"
+                    />
+                    <button
+                        className={classes.buttonUpDown}
+                        onClick={handleIncrement}
+                    >
+                      <ArrowDropUpIcon className={classes.buttonSign}/>
+                    </button>
+                    <button
+                        className={classes.buttonUpDown}
+                        onClick={handleDecrement}
+                    >
+                      <ArrowDropDownIcon className={classes.buttonSign}/>
+                    </button>
                   </div>
-                  <input
-                    className={classes.inputPomo}
-                    value={pomoValue}
-                    onInput={(event) =>
-                      setPomoValue(parseInt(event.target.value))
-                    }
-                    type="number"
-                  />
-                  <button
-                    className={classes.buttonUpDown}
-                    onClick={handleIncrement}
-                  >
-                    <ArrowDropUpIcon className={classes.buttonSign} />
-                  </button>
-                  <button
-                    className={classes.buttonUpDown}
-                    onClick={handleDecrement}
-                  >
-                    <ArrowDropDownIcon className={classes.buttonSign} />
-                  </button>
                 </div>
               </div>
+              {/*<div className={classes.containerValueItem}></div> this use for Add note and Add project in furture update*/}
             </div>
-            {/*<div className={classes.containerValueItem}></div> this use for Add note and Add project in furture update*/}
+          </div>
+          <div className={classes.containerButtonForm}>
+            <button
+                className={classes.buttonDelete}
+                onClick={() => props.deleteTodo(props.todos.id)}
+            >
+              Delete
+            </button>
+            <div>
+              <button
+                  className={classes.cancelButton}
+                  onClick={handleCancelInput}
+              >
+                Cancel
+              </button>
+              <button
+                  className={inputValue ? classes.saveButtonOn : classes.saveButton}
+                  disabled={checkDisable()}
+                  onClick={handleSubmit}
+              >
+                Save
+              </button>
+            </div>
           </div>
         </div>
-        <div className={classes.containerButtonForm}>
-          <button
-            className={classes.buttonDelete}
-            onClick={() => props.deleteTodo(props.todos.id)}
-          >
-            Delete
-          </button>
-          <div>
-            <button
-              className={classes.cancelButton}
-              onClick={handleCancelInput}
-            >
-              Cancel
-            </button>
-            <button
-              className={inputValue ? classes.saveButtonOn : classes.saveButton}
-              disabled={checkDisable()}
-              onClick={handleSubmit}
-            >
-              Save
-            </button>
-          </div>
-        </div>
-      </div>
-    </>
+      </>
   );
 };
 

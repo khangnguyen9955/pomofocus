@@ -9,6 +9,7 @@ import { SettingContext } from "../../context/SettingContext";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import AddIcon from "@mui/icons-material/Add";
+import { AuthContext } from "../../context/AuthContext";
 
 const useStyles = makeStyles(() => ({
   containerTodoList: {
@@ -112,6 +113,33 @@ const TodoList = ({ todos, setTodos }) => {
   const [showEdit, setShowEdit] = useState(false);
   const editRef = useRef(null);
 
+  const { login } = useContext(AuthContext);
+
+  function handleClickSaveTemplates() {
+    if (login) {
+      if (todos.length < 1) {
+        window.alert("Add task first");
+      } else {
+        settingInfo.setShowSaveTemplate(true);
+      }
+    } else {
+      window.alert("You must login first to use this feature");
+    }
+  }
+
+  function handleAddTemplates() {
+    settingInfo.setShowAddTemplate(true);
+  }
+
+  function handleDeleteAllTasks() {
+    setTodos([]);
+  }
+
+  function handleDeleteFinishedTasks() {
+    const newList = [...todos].filter((todo) => todo.done !== true);
+    setTodos(newList);
+  }
+
   function useOutsideAlerter(ref) {
     useEffect(() => {
       function handleClickOutside(event) {
@@ -164,6 +192,7 @@ const TodoList = ({ todos, setTodos }) => {
         totalMinute = "0" + totalMinute;
       }
     }
+
     let time = Math.floor(totalHour) + ":" + totalMinute;
     return time;
   }
@@ -212,27 +241,42 @@ const TodoList = ({ todos, setTodos }) => {
 
           {showEdit && (
             <div className={classes.editButton} ref={editRef}>
-              <div className={classes.editOptions}>
+              <div
+                className={classes.editOptions}
+                onClick={handleDeleteFinishedTasks}
+              >
                 <DeleteOutlineIcon
                   sx={{ opacity: 0.8, width: 20, marginRight: "8px" }}
                 />
                 Clear finished tasks
               </div>
-              <div className={classes.editOptions}>
-                <DeleteOutlineIcon
-                  sx={{ opacity: 0.8, width: 20, marginRight: "8px" }}
-                />
-                Clear all tasks
-              </div>
-              <div className={classes.editOptions}>
+
+              <div
+                className={classes.editOptions}
+                onClick={handleClickSaveTemplates}
+              >
                 <InsertDriveFileIcon
                   sx={{ opacity: 0.8, width: 20, marginRight: "8px" }}
                 />
                 Save as templates
               </div>
-              <div className={classes.editOptions}>
+              <div
+                className={classes.editOptions}
+                onClick={() => {
+                  handleAddTemplates(79);
+                }}
+              >
                 <AddIcon sx={{ opacity: 0.8, width: 20, marginRight: "8px" }} />
                 Add from templates
+              </div>
+              <div
+                className={classes.editOptions}
+                onClick={handleDeleteAllTasks}
+              >
+                <DeleteOutlineIcon
+                  sx={{ opacity: 0.8, width: 20, marginRight: "8px" }}
+                />
+                Clear all tasks
               </div>
             </div>
           )}

@@ -34,7 +34,6 @@ export const addUser = async (uid, data) => {
     modifiedAt: serverTimestamp(),
   });
 };
-
 export const updateUser = async (uid, data) => {
   const userRef = doc(db, "users", uid);
   await updateDoc(userRef, {
