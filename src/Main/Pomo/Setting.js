@@ -79,39 +79,7 @@ const useStyles = makeStyles(() => ({
     boxSizing: "border-box",
     width: 70,
   },
-  pseudoSetting: {
-    color: "rgb(34,34,34)",
-    borderRadius: 8,
-    backgroundColor: "white",
-    position: "relative",
-    maxWidth: 400,
-    width: "95%",
-    zIndex: 100,
-    borderTop: "1px solid rgb(239,239,239)",
-    borderBottom: "1px solid rgb(239,239,239)",
-    margin: "auto",
-    transition: "all 0.2s ease-in 0s",
-    boxShadow: "rgb(0 0 0 / 15%) 0px 10px 20px, rgb(0 0 0/10%) 0px 3px 6px",
-    overflow: "hidden",
-    display: "block",
-    transform: "translateY(-175px)",
-  },
-  backgroundPseudo: {
-    backgroundColor: "rgba(0,0,0,0.4)",
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100vh",
-    zIndex: 100,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    transition: "all 0.2s ease-in 0s",
-    overflow: "hidden scroll",
-    padding: "48px 0px",
-    boxSizing: "border-box",
-  },
+
   icon: {
     position: "absolute",
     top: 20,
@@ -225,34 +193,86 @@ const Setting = ({ showSetting }) => {
   return (
     <>
       {settingInfo.showSetting && (
-        <div className={classes.backgroundPseudo}>
-          <div className={classes.pseudoSetting}>
-            <ClearIcon
-              className={classes.icon}
-              onClick={() => {
-                settingInfo.setShowSetting(false);
-              }}
-            />
-            <div className={classes.containerSetting}>
-              <Grid
-                container
-                direction="column"
-                spacing={3}
-                className={classes.containerLayer}
-                sx={{ marginTop: 0, marginLeft: 0, width: "100%" }}
+        <>
+          <ClearIcon
+            className={classes.icon}
+            onClick={() => {
+              settingInfo.setShowSetting(false);
+            }}
+          />
+          <div className={classes.containerSetting}>
+            <Grid
+              container
+              direction="column"
+              spacing={3}
+              className={classes.containerLayer}
+              sx={{ marginTop: 0, marginLeft: 0, width: "100%" }}
+            >
+              {/* Time  */}
+              <Typography
+                className={classes.labelSetting}
+                sx={{
+                  fontSize: 16,
+                  fontWeight: "bold",
+                  marginBottom: "16px",
+                }}
               >
-                {/* Time  */}
+                TIMER SETTING
+              </Typography>
+              <Box className={classes.gridItem}>
                 <Typography
-                  className={classes.labelSetting}
                   sx={{
-                    fontSize: 16,
                     fontWeight: "bold",
-                    marginBottom: "16px",
+                    alignItems: "center",
+                    display: "flex",
+                    color: "rgb(85,85,85)",
+                    width: "100%",
                   }}
                 >
-                  TIMER SETTING
+                  Time (minutes)
                 </Typography>
-                <Box className={classes.gridItem}>
+                <Box className={classes.boxText}>
+                  <div className={classes.box}>
+                    <label className={classes.labelBox}>
+                      Pomodoro
+                      <input
+                        type="number"
+                        onInput={(e) => setPomodoro(parseInt(e.target.value))}
+                        className={classes.inputBox}
+                        defaultValue={settingInfo.pomoMinute}
+                      />
+                    </label>
+                  </div>
+                  <div className={classes.box}>
+                    <label className={classes.labelBox}>
+                      Short Break
+                      <input
+                        onInput={(e) => setShortBreak(parseInt(e.target.value))}
+                        type="number"
+                        className={classes.inputBox}
+                        defaultValue={settingInfo.shortBreakMinute}
+                      />
+                    </label>
+                  </div>
+                  <div className={classes.box}>
+                    <label className={classes.labelBox}>
+                      Long Break
+                      <input
+                        type="number"
+                        className={classes.inputBox}
+                        onInput={(e) => setLongBreak(parseInt(e.target.value))}
+                        defaultValue={settingInfo.longBreakMinute}
+                      />
+                    </label>
+                  </div>
+                </Box>
+              </Box>
+              {/* Auto start break */}
+              <Box className={classes.gridItem}>
+                <Box
+                  className={classes.boxText}
+                  sx={{ margin: 0, width: "100%", alignItems: "center" }}
+                >
                   <Typography
                     sx={{
                       fontWeight: "bold",
@@ -262,160 +282,102 @@ const Setting = ({ showSetting }) => {
                       width: "100%",
                     }}
                   >
-                    Time (minutes)
+                    Auto start Breaks?
                   </Typography>
-                  <Box className={classes.boxText}>
-                    <div className={classes.box}>
-                      <label className={classes.labelBox}>
-                        Pomodoro
-                        <input
-                          type="number"
-                          onInput={(e) => setPomodoro(parseInt(e.target.value))}
-                          className={classes.inputBox}
-                          defaultValue={settingInfo.pomoMinute}
-                        />
-                      </label>
-                    </div>
-                    <div className={classes.box}>
-                      <label className={classes.labelBox}>
-                        Short Break
-                        <input
-                          onInput={(e) =>
-                            setShortBreak(parseInt(e.target.value))
-                          }
-                          type="number"
-                          className={classes.inputBox}
-                          defaultValue={settingInfo.shortBreakMinute}
-                        />
-                      </label>
-                    </div>
-                    <div className={classes.box}>
-                      <label className={classes.labelBox}>
-                        Long Break
-                        <input
-                          type="number"
-                          className={classes.inputBox}
-                          onInput={(e) =>
-                            setLongBreak(parseInt(e.target.value))
-                          }
-                          defaultValue={settingInfo.longBreakMinute}
-                        />
-                      </label>
-                    </div>
-                  </Box>
-                </Box>
-                {/* Auto start break */}
-                <Box className={classes.gridItem}>
-                  <Box
-                    className={classes.boxText}
-                    sx={{ margin: 0, width: "100%", alignItems: "center" }}
+                  <div
+                    className={
+                      settingInfo.autoBreak
+                        ? classes.autoButtonOn
+                        : classes.button
+                    }
+                    onClick={handleSetAutoBreak}
                   >
-                    <Typography
-                      sx={{
-                        fontWeight: "bold",
-                        alignItems: "center",
-                        display: "flex",
-                        color: "rgb(85,85,85)",
-                        width: "100%",
-                      }}
-                    >
-                      Auto start Breaks?
-                    </Typography>
                     <div
                       className={
                         settingInfo.autoBreak
-                          ? classes.autoButtonOn
-                          : classes.button
+                          ? classes.autoCircleOn
+                          : classes.circle
                       }
-                      onClick={handleSetAutoBreak}
-                    >
-                      <div
-                        className={
-                          settingInfo.autoBreak
-                            ? classes.autoCircleOn
-                            : classes.circle
-                        }
-                      ></div>
-                    </div>
-                  </Box>
+                    ></div>
+                  </div>
                 </Box>
-                {/* Auto start pomo */}
-                <Box className={classes.gridItem}>
-                  <Box
-                    className={classes.boxText}
-                    sx={{ margin: 0, width: "100%", alignItems: "center" }}
+              </Box>
+              {/* Auto start pomo */}
+              <Box className={classes.gridItem}>
+                <Box
+                  className={classes.boxText}
+                  sx={{ margin: 0, width: "100%", alignItems: "center" }}
+                >
+                  <Typography
+                    sx={{
+                      fontWeight: "bold",
+                      alignItems: "center",
+                      display: "flex",
+                      color: "rgb(85,85,85)",
+                      width: "100%",
+                    }}
                   >
-                    <Typography
-                      sx={{
-                        fontWeight: "bold",
-                        alignItems: "center",
-                        display: "flex",
-                        color: "rgb(85,85,85)",
-                        width: "100%",
-                      }}
-                    >
-                      Auto start Pomodoro?
-                    </Typography>
+                    Auto start Pomodoro?
+                  </Typography>
+                  <div
+                    className={
+                      settingInfo.autoPomo
+                        ? classes.autoButtonOn
+                        : classes.button
+                    }
+                    onClick={handleSetAutoPomo}
+                  >
                     <div
                       className={
                         settingInfo.autoPomo
-                          ? classes.autoButtonOn
-                          : classes.button
+                          ? classes.autoCircleOn
+                          : classes.circle
                       }
-                      onClick={handleSetAutoPomo}
-                    >
-                      <div
-                        className={
-                          settingInfo.autoPomo
-                            ? classes.autoCircleOn
-                            : classes.circle
-                        }
-                      ></div>
-                    </div>
-                  </Box>
+                    ></div>
+                  </div>
                 </Box>
-                {/* Long break interval */}
-                <Box className={classes.gridItem}>
-                  <Box
-                    className={classes.boxText}
-                    sx={{ margin: 0, width: "100%", alignItems: "center" }}
-                  >
-                    <Typography
-                      sx={{
-                        fontWeight: "bold",
-                        alignItems: "center",
-                        display: "flex",
-                        color: "rgb(85,85,85)",
-                        width: "100%",
-                      }}
-                    >
-                      Long Break interval
-                    </Typography>
-                    <div className={classes.button}>
-                      <input
-                        type="number"
-                        defaultValue={settingInfo.longBreakInterval}
-                        className={classes.inputValueInterval}
-                        onChange={(e) => {
-                          settingInfo.setLongBreakInterval(e.target.value);
-                        }}
-                      />
-                    </div>
-                  </Box>
-                </Box>
-              </Grid>
-              <div className={classes.containerButtonSubmit}>
-                <button
-                  className={classes.buttonSubmit}
-                  onClick={handleSubmitSetting}
-                  disabled={disabled}
+              </Box>
+              {/* Long break interval */}
+              <Box className={classes.gridItem}>
+                <Box
+                  className={classes.boxText}
+                  sx={{ margin: 0, width: "100%", alignItems: "center" }}
                 >
-                  OK
-                </button>
-              </div>
+                  <Typography
+                    sx={{
+                      fontWeight: "bold",
+                      alignItems: "center",
+                      display: "flex",
+                      color: "rgb(85,85,85)",
+                      width: "100%",
+                    }}
+                  >
+                    Long Break interval
+                  </Typography>
+                  <div className={classes.button}>
+                    <input
+                      type="number"
+                      defaultValue={settingInfo.longBreakInterval}
+                      className={classes.inputValueInterval}
+                      onChange={(e) => {
+                        settingInfo.setLongBreakInterval(e.target.value);
+                      }}
+                    />
+                  </div>
+                </Box>
+              </Box>
+            </Grid>
+            <div className={classes.containerButtonSubmit}>
+              <button
+                className={classes.buttonSubmit}
+                onClick={handleSubmitSetting}
+                disabled={disabled}
+              >
+                OK
+              </button>
             </div>
           </div>
-        </div>
+        </>
       )}
     </>
   );

@@ -25,8 +25,11 @@ export default function SettingProvider({ children }) {
     id: null,
     count: 0,
   });
+  const [showAddTemplate, setShowAddTemplate] = useState(false);
+  const [showSaveTemplate, setShowSaveTemplate] = useState(false);
 
   const currentSession = user?.currentSession;
+  const template = user?.template;
 
   const value = {
     pomoMinute,
@@ -64,6 +67,11 @@ export default function SettingProvider({ children }) {
     focusTodoId,
     setFocusTodoId,
     currentSession,
+    template,
+    showAddTemplate,
+    setShowAddTemplate,
+    showSaveTemplate,
+    setShowSaveTemplate,
   };
   return (
     <SettingContext.Provider value={value}>{children}</SettingContext.Provider>

@@ -6,43 +6,9 @@ import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
 import { AuthContext } from "../../../context/AuthContext";
 import CloseIcon from "@mui/icons-material/Close";
 import { SettingContext } from "../../../context/SettingContext";
-import { Pagination } from "@mui/lab";
+import { Pagination } from "@mui/material";
 
 const useStyles = makeStyles({
-  containerReport: {
-    backgroundColor: "rgba(0,0,0,0.4)",
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100vh",
-    zIndex: 99999999,
-    display: "flex",
-    pointerEvents: "auto",
-    justifyContent: "center",
-    overflow: "hidden scroll",
-    alignItems: "center",
-    transition: "all 0.2s ease-in 0s",
-    padding: "48px 0px",
-    boxSizing: "border-box",
-  },
-  layerContainerReport: {
-    color: "rgb(34,34,34)",
-    borderRadius: 8,
-    backgroundColor: "white",
-    position: "relative",
-    maxWidth: 600,
-    width: "95%",
-    zIndex: 100,
-    borderTop: "1px solid rgb(239,239,239)",
-    borderBottom: "1px solid rgb(239,239,239)",
-    margin: "auto",
-    transition: "all 0.2s ease-in 0s",
-    boxShadow: "rgb(0 0 0 / 15%) 0px 10px 20px, rgb(0 0 0/10%) 0px 3px 6px",
-    overflow: "hidden",
-    display: "block",
-    transform: "translateY(-30px)",
-  },
   report: {
     position: "relative",
     maxWidth: 780,
@@ -224,7 +190,7 @@ const Report = () => {
       setDaysAccess("--");
       setDayStreak("--");
     }
-  }, [user.currentSession.taskList, login]);
+  }, [user, login]);
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   let PageSize = 10;
@@ -235,8 +201,9 @@ const Report = () => {
       return user.currentSession.taskList.slice(firstPageIndex, lastPageIndex);
     }
   }, [currentPage]);
-  user.currentSession.taskList.reverse();
-
+  if (user.currentSession) {
+    user.currentSession.taskList.reverse();
+  }
   const settingInfo = useContext(SettingContext);
   const classes = useStyles();
   const [focused, setFocused] = useState(1);
@@ -246,64 +213,127 @@ const Report = () => {
   };
 
   return (
-    <div className={classes.containerReport}>
-      <div className={classes.layerContainerReport}>
-        <CloseIcon
-          onClick={() => settingInfo.setShowReport(false)}
-          sx={{
-            position: "absolute",
-            top: 20,
-            right: 24,
-            cursor: "pointer",
-            width: 35,
-            opacity: 0.3,
-            zIndex: 100000,
-          }}
-        />
-        <div className={classes.report}>
-          <div className={classes.layerReport}>
-            <div className={classes.firstContainerItem}>
-              <div
-                className={
-                  focused === 1
-                    ? classes.summaryItemFocused
-                    : classes.summaryItem
-                }
-                onClick={() => setFocused(1)}
-                id={1}
-              >
-                Summary
-              </div>
-              <div
-                className={
-                  focused === 2
-                    ? classes.summaryItemFocused
-                    : classes.summaryItem
-                }
-                id={2}
-                onClick={() => setFocused(2)}
-              >
-                Detail
-              </div>
+    <>
+      <CloseIcon
+        onClick={() => settingInfo.setShowReport(false)}
+        sx={{
+          position: "absolute",
+          top: 20,
+          right: 24,
+          cursor: "pointer",
+          width: 35,
+          opacity: 0.3,
+          zIndex: 100000,
+        }}
+      />
+      <div className={classes.report}>
+        <div className={classes.layerReport}>
+          <div className={classes.firstContainerItem}>
+            <div
+              className={
+                focused === 1 ? classes.summaryItemFocused : classes.summaryItem
+              }
+              onClick={() => setFocused(1)}
+              id={1}
+            >
+              Summary
             </div>
-            <div className={classes.secondContainerItem}>
-              <div className={classes.containerSeparate}>
-                {/*// cho nay se logic chon cai nao !!*/}
-                {focused === 1 ? (
-                  <div className={classes.titleSeparateItem}>
-                    Activity Summary
-                  </div>
-                ) : (
-                  <div className={classes.titleSeparateItem}>
-                    Focus Time Detail
+            <div
+              className={
+                focused === 2 ? classes.summaryItemFocused : classes.summaryItem
+              }
+              id={2}
+              onClick={() => setFocused(2)}
+            >
+              Detail
+            </div>
+          </div>
+          <div className={classes.secondContainerItem}>
+            <div className={classes.containerSeparate}>
+              {/*// cho nay se logic chon cai nao !!*/}
+              {focused === 1 ? (
+                <div className={classes.titleSeparateItem}>
+                  Activity Summary
+                </div>
+              ) : (
+                <div className={classes.titleSeparateItem}>
+                  Focus Time Detail
+                </div>
+              )}
+
+              <div className={classes.separateLine}></div>
+            </div>
+
+            {focused === 1 ? (
+              <>
+                {login === false && (
+                  <div
+                    style={{
+                      color: "rgb(163,163,163)",
+                      fontSize: 16,
+                      textAlign: "left",
+                      marginTop: 14,
+                      marginBottom: 28,
+                    }}
+                  >
+                    * This report will be available when you are logged in
                   </div>
                 )}
 
-                <div className={classes.separateLine}></div>
-              </div>
+                <div className={classes.containerDetailsSummary}>
+                  <div className={classes.layerDetailsSummary}>
+                    <div className={classes.detailsSummary}>
+                      <AccessTimeIcon
+                        className={classes.imgDetailsSummary}
+                        sx={{
+                          color: "rgb(213,117,114)",
+                          fontSize: 35,
+                        }}
+                      />
+                      <div className={classes.contentDetailsSummary}>
+                        {hourFocused}
+                      </div>
+                      <div className={classes.detailDetailsSummary}>
+                        hours focused
+                      </div>
+                    </div>
+                    <div className={classes.detailsSummary}>
+                      <CalendarTodayIcon
+                        className={classes.imgDetailsSummary}
+                        sx={{
+                          color: "rgb(213,117,114)",
+                          fontSize: 35,
+                        }}
+                      />
+                      <div className={classes.contentDetailsSummary}>
+                        {daysAccess}
+                      </div>
 
-              {focused === 1 ? (
-                <>
+                      <div className={classes.detailDetailsSummary}>
+                        days accessed
+                      </div>
+                    </div>
+                    <div className={classes.detailsSummary}>
+                      <LocalFireDepartmentIcon
+                        sx={{
+                          color: "rgb(213,117,114)",
+                          fontSize: 35,
+                        }}
+                        className={classes.imgDetailsSummary}
+                      />
+                      <div className={classes.contentDetailsSummary}>
+                        {dayStreak}
+                      </div>
+                      <div className={classes.detailDetailsSummary}>
+                        days streak
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className={classes.containerDetailTime}>
                   {login === false && (
                     <div
                       style={{
@@ -317,134 +347,64 @@ const Report = () => {
                       * This report will be available when you are logged in
                     </div>
                   )}
-
-                  <div className={classes.containerDetailsSummary}>
-                    <div className={classes.layerDetailsSummary}>
-                      <div className={classes.detailsSummary}>
-                        <AccessTimeIcon
-                          className={classes.imgDetailsSummary}
-                          sx={{
-                            color: "rgb(213,117,114)",
-                            fontSize: 35,
-                          }}
-                        />
-                        <div className={classes.contentDetailsSummary}>
-                          {hourFocused}
-                        </div>
-                        <div className={classes.detailDetailsSummary}>
-                          hours focused
-                        </div>
-                      </div>
-                      <div className={classes.detailsSummary}>
-                        <CalendarTodayIcon
-                          className={classes.imgDetailsSummary}
-                          sx={{
-                            color: "rgb(213,117,114)",
-                            fontSize: 35,
-                          }}
-                        />
-                        <div className={classes.contentDetailsSummary}>
-                          {daysAccess}
-                        </div>
-
-                        <div className={classes.detailDetailsSummary}>
-                          days accessed
-                        </div>
-                      </div>
-                      <div className={classes.detailsSummary}>
-                        <LocalFireDepartmentIcon
-                          sx={{
-                            color: "rgb(213,117,114)",
-                            fontSize: 35,
-                          }}
-                          className={classes.imgDetailsSummary}
-                        />
-                        <div className={classes.contentDetailsSummary}>
-                          {dayStreak}
-                        </div>
-                        <div className={classes.detailDetailsSummary}>
-                          days streak
-                        </div>
-                      </div>
-                    </div>
+                  <div className={classes.titleDetail}>
+                    <div className={classes.titleDetailDate}>Date</div>
+                    <div className={classes.titleDetailTask}>Task</div>
+                    <div className={classes.titleDetailTime}>Minutes</div>
                   </div>
-                </>
-              ) : (
-                <>
-                  <div className={classes.containerDetailTime}>
-                    {login === false && (
-                      <div
-                        style={{
-                          color: "rgb(163,163,163)",
-                          fontSize: 16,
-                          textAlign: "left",
-                          marginTop: 14,
-                          marginBottom: 28,
-                        }}
-                      >
-                        * This report will be available when you are logged in
-                      </div>
-                    )}
-                    <div className={classes.titleDetail}>
-                      <div className={classes.titleDetailDate}>Date</div>
-                      <div className={classes.titleDetailTask}>Task</div>
-                      <div className={classes.titleDetailTime}>Minutes</div>
-                    </div>
 
-                    {login && (
-                      <>
-                        {currentTableData.map((task, index) => (
-                          <div className={classes.detailTimeItem} key={index}>
-                            <div className={classes.containerDetailTimeItem}>
-                              <div className={classes.containerDateItem}>
-                                <div className={classes.dateItem}>
-                                  {task.date.toLocaleString()}
-                                </div>
+                  {login && (
+                    <>
+                      {currentTableData.map((task, index) => (
+                        <div className={classes.detailTimeItem} key={index}>
+                          <div className={classes.containerDetailTimeItem}>
+                            <div className={classes.containerDateItem}>
+                              <div className={classes.dateItem}>
+                                {task.date.toLocaleString()}
                               </div>
-                              <div className={classes.containerTaskItem}>
-                                <div>
-                                  <div className={classes.taskItem}>
-                                    {task.title}
-                                  </div>
-                                </div>
-                              </div>
-                              <div className={classes.containerTimeItem}>
-                                <div className={classes.timeItem}>
-                                  {task.time}
-                                </div>
-                              </div>
-                              <div style={{ width: "15%" }}></div>
                             </div>
+                            <div className={classes.containerTaskItem}>
+                              <div>
+                                <div className={classes.taskItem}>
+                                  {task.title}
+                                </div>
+                              </div>
+                            </div>
+                            <div className={classes.containerTimeItem}>
+                              <div className={classes.timeItem}>
+                                {task.time}
+                              </div>
+                            </div>
+                            <div style={{ width: "15%" }}></div>
                           </div>
-                        ))}
-                      </>
-                    )}
-                  </div>
-                  <div style={{ marginTop: 18 }}>
-                    <Pagination
-                      count={
-                        login
-                          ? Math.round(
-                              user.currentSession.taskList.length / 9
-                            ) + 1
-                          : 1
-                      }
-                      siblingCount={1}
-                      sx={{
-                        alignItems: "center",
-                        justifyContent: "center",
-                        display: "flex",
-                      }}
-                      onChange={handleChangePage}
-                    />
-                  </div>
-                </>
-              )}
-            </div>
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </div>
+                <div style={{ marginTop: 18 }}>
+                  <Pagination
+                    count={
+                      login
+                        ? Math.round(user.currentSession.taskList.length / 9) +
+                          1
+                        : 1
+                    }
+                    siblingCount={1}
+                    sx={{
+                      alignItems: "center",
+                      justifyContent: "center",
+                      display: "flex",
+                    }}
+                    onChange={handleChangePage}
+                  />
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
