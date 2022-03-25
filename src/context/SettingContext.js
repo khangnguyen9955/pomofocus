@@ -4,7 +4,7 @@ import { AuthContext } from "./AuthContext";
 export const SettingContext = createContext();
 export default function SettingProvider({ children }) {
   const { user } = useContext(AuthContext);
-  const [pomoMinute, setPomoMinute] = useState(0.05);
+  const [pomoMinute, setPomoMinute] = useState(25);
   const [shortBreakMinute, setShortBreakMinute] = useState(5);
   const [longBreakMinute, setLongBreakMinute] = useState(15);
   const [showSetting, setShowSetting] = useState(false);

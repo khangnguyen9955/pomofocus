@@ -359,9 +359,6 @@ const Setting = ({ showSetting }) => {
                       type="number"
                       defaultValue={settingInfo.longBreakInterval}
                       className={classes.inputValueInterval}
-                      onChange={(e) => {
-                        settingInfo.setLongBreakInterval(e.target.value);
-                      }}
                     />
                   </div>
                 </Box>

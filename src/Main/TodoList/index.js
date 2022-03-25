@@ -123,12 +123,16 @@ const TodoList = ({ todos, setTodos }) => {
         settingInfo.setShowSaveTemplate(true);
       }
     } else {
-      window.alert("You must login first to use this feature");
+      window.alert("You must login first to use this feature.");
     }
   }
 
   function handleAddTemplates() {
-    settingInfo.setShowAddTemplate(true);
+    if (login) {
+      settingInfo.setShowAddTemplate(true);
+    } else {
+      window.alert("You must login first to use this feature.");
+    }
   }
 
   function handleDeleteAllTasks() {
@@ -263,7 +267,7 @@ const TodoList = ({ todos, setTodos }) => {
               <div
                 className={classes.editOptions}
                 onClick={() => {
-                  handleAddTemplates(79);
+                  handleAddTemplates();
                 }}
               >
                 <AddIcon sx={{ opacity: 0.8, width: 20, marginRight: "8px" }} />
