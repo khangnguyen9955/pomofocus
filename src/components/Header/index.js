@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { Divider, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
@@ -28,15 +28,15 @@ const useStyles = makeStyles({
     display: "flex",
   },
   headerContainer: {
-    padding: "0px 12px",
-    maxWidth: 620,
+    padding: "0px 40px",
+    maxWidth: "100%",
     margin: "auto",
+    marginBottom: 25,
   },
   imgButton: {
+    color: "white",
+    marginRight: 4,
     width: 16,
-  },
-  contentButton: {
-    marginLeft: 4,
   },
   button: {
     display: "flex",
@@ -53,7 +53,7 @@ const useStyles = makeStyles({
     padding: "4px 8px",
     minWidth: 70,
     border: "none",
-    color: "white",
+    color: "black",
   },
   imgLogin: {
     width: 28,
@@ -121,7 +121,6 @@ const Header = () => {
           setShowProfile(false);
         }
       }
-
       // Bind the event listener
       document.addEventListener("mousedown", handleClickOutside);
       return () => {
@@ -161,7 +160,7 @@ const Header = () => {
       <div className={classes.header}>
         <div>
           <Typography sx={{ fontWeight: "bold", fontSize: 20 }}>
-            Pomofocus
+            stayinpomo
           </Typography>
         </div>
 
@@ -171,18 +170,32 @@ const Header = () => {
             onClick={() => settingInfo.setShowReport(true)}
           >
             <AssessmentIcon className={classes.imgButton} />
-            <div className={classes.contentButton}>Report</div>
+            <Typography
+              sx={{
+                fontWeight: "bold",
+                color: "white",
+                fontSize: 14,
+              }}
+            >
+              Analytic
+            </Typography>
           </button>
           <button
             className={classes.button}
             onClick={() => {
               settingInfo.setShowSetting(true);
-              console.log("?");
-              console.log(settingInfo.showSetting);
             }}
           >
             <SettingsIcon className={classes.imgButton} />
-            <div className={classes.contentButton}>Setting</div>
+            <Typography
+              sx={{
+                fontWeight: "bold",
+                color: "white",
+                fontSize: 14,
+              }}
+            >
+              Setting
+            </Typography>
           </button>
           {login ? (
             <>
@@ -221,11 +234,20 @@ const Header = () => {
           ) : (
             <button className={classes.button} onClick={handleLogin}>
               <AccountCircleIcon className={classes.imgButton} />
-              <div className={classes.contentButton}>Login</div>
+              <Typography
+                sx={{
+                  fontWeight: "bold",
+                  color: "white",
+                  fontSize: 14,
+                }}
+              >
+                Login
+              </Typography>
             </button>
           )}
         </div>
       </div>
+      <Divider />
     </div>
   );
 };

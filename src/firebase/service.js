@@ -22,7 +22,6 @@ export const getUserData = async (uid) => {
 
 export const addUser = async (uid, data) => {
   const userRef = doc(db, "users", uid);
-
   await setDoc(userRef, {
     ...data,
     currentSession: {
